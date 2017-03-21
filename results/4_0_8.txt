@@ -1,0 +1,22 @@
+[01]     min : 0.0        (element:      0)    max     : 214.0      (element:  22156)       med     :     39
+[01]     min : 0.0        (element:  13387)    max     : 122.0      (element:   5820)       med     :     84
+[01]     min : 0.0        (element:      0)    max     : 93.0       (element:  10469)       med     :     39
+[01]     min : 0.0        (element:  37004)    max     : 318.0      (element:   6070)       med     :     86
+[01]     min : 0.0        (element:      0)    max     : 63.0       (element:   3583)       med     :     39
+[01]     min : 99.0       (element:      5)    max     : 155.0      (element:   6212)       med     :    107
+[01]     min : 0.0        (element:      0)    max     : 84.0       (element:  19490)       med     :     39
+[01]     min : 96.0       (element:   1335)    max     : 140.0      (element:  25066)       med     :    107
+[01]     min : 0.0        (element:      0)    max     : 196.0      (element:  21167)       med     :     39
+[01]     min : 0.0        (element:  28853)    max     : 155.0      (element:  40132)       med     :    107
+[01]     min : 0.0        (element:      0)    max     : 109.0      (element:  17623)       med     :     38
+[01]     min : 95.0       (element:    992)    max     : 352.0      (element:   6290)       med     :    104
+[01]     min : 0.0        (element:      0)    max     : 152.0      (element:   5350)       med     :     39
+[01]     min : 0.0        (element:  37017)    max     : 140.0      (element:  14122)       med     :    107
+[01]     min : 0.0        (element:      0)    max     : 140.0      (element:  34438)       med     :     39
+[01]     min : 0.0        (element:  34437)    max     : 146.0      (element:  36005)       med     :    107
+[01]     min : 0.0        (element:      0)    max     : 170.0      (element:  19978)       med     :     39
+[01]     min : 0.0        (element:  23562)    max     : 134.0      (element:  19820)       med     :     99
+[01]     min : 0.0        (element:      0)    max     : 108.0      (element:  23318)       med     :     39
+[01]     min : 78.0       (element:   1098)    max     : 249.0      (element:   4900)       med     :     84
+[00]  ** Results 1 from Core 1 : store to modified mine
+[00]  ** Results 2 from Core 1 : store to owned mine (if owned is supported, else exclusive)

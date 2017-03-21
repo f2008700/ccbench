@@ -1,0 +1,10 @@
+[01]     min : 4.0        (element:     15)    max     : 93.0       (element:  17554)       med     :     10
+[01]     min : 4.0        (element:     51)    max     : 69.0       (element:  43910)       med     :     10
+[01]     min : 0.0        (element:  49947)    max     : 119.0      (element:   1735)       med     :     13
+[01]     min : 4.0        (element:     42)    max     : 75.0       (element:  21501)       med     :     10
+[01]     min : 4.0        (element:    137)    max     : 80.0       (element:  48412)       med     :     10
+[01]     min : 4.0        (element:     55)    max     : 166.0      (element:  35005)       med     :     10
+[01]     min : 4.0        (element:     54)    max     : 60.0       (element:  31461)       med     :     10
+[01]     min : 4.0        (element:     72)    max     : 84.0       (element:   4344)       med     :     12
+[01]     min : 4.0        (element:     37)    max     : 72.0       (element:  15294)       med     :     10
+[01]     min : 0.0        (element:  25942)    max     : 46.0       (element:  48191)       med     :     10

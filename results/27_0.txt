@@ -1,0 +1,7 @@
+[00]     min : 197.0      (element:      1)    max     : 198.0      (element:      9)       med     :    197
+[00]     min : 196.0      (element:      1)    max     : 197.0      (element:     15)       med     :    196
+[00]     min : 196.0      (element:      2)    max     : 198.0      (element:     35)       med     :    197
+[00]     min : 195.0      (element:      5)    max     : 197.0      (element:     50)       med     :    196
+[00]     min : 196.0      (element:      1)    max     : 197.0      (element:     25)       med     :    196
+[00]     min : 196.0      (element:      1)    max     : 197.0      (element:     56)       med     :    196
+[00]     min : 196.0      (element:      1)    max     : 197.0      (element:     12)       med     :    197

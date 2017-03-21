@@ -1,0 +1,6 @@
+[01]     min : 0.0        (element:      0)    max     : 1494.0     (element:  48832)       med     :     36
+[01]     min : 0.0        (element:      0)    max     : 1497.0     (element:    576)       med     :     38
+[01]     min : 0.0        (element:      0)    max     : 1500.0     (element:   1024)       med     :     35
+[01]     min : 0.0        (element:      0)    max     : 1497.0     (element:  12352)       med     :     38
+[01]     min : 0.0        (element:      0)    max     : 1500.0     (element:   2304)       med     :     38
+[01]     min : 0.0        (element:      0)    max     : 1497.0     (element:  24832)       med     :     38
