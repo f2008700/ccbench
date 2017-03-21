@@ -117,6 +117,12 @@ typedef enum
     PAUSE,
     NOP,
     NUM_EVENTS,			/* placeholder for printing the num of events */
+    STORE_ON_MODIFIED_MINE,
+    LOAD_FROM_MODIFIED_MINE,
+    LOAD_FROM_EXCLUSIVE_MINE,
+    LOAD_FROM_SHARED_MINE,
+    LOAD_FROM_OWNED_MINE,
+    CAS_ON_MODIFIED_MINE,
   } moesi_type_t;
 
 const char* moesi_type_des[] =

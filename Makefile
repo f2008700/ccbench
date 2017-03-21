@@ -1,7 +1,7 @@
 SRC = src
 INCLUDE = include
 
-CFLAGS = -O3 -Wall
+CFLAGS = -O3 -Wall -g
 LDFLAGS = -lm -lrt
 VER_FLAGS = -D_GNU_SOURCE
 
@@ -17,10 +17,10 @@ CC = gcc
 PLATFORM_NUMA = 1
 endif
 
-ifeq ($(UNAME), diassrv8)
-PLATFORM = XEON
+ifeq ($(UNAME), betelgeuse.cs.wisc.edu)
+#ifeq ($(UNAME), node-0.node.superpages-pg0.utah.cloudlab.us)
+PLATFORM = XEON2
 CC = gcc
-PLATFORM_NUMA = 1
 endif
 
 ifeq ($(UNAME), maglite)

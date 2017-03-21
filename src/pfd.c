@@ -30,6 +30,9 @@
 #include "pfd.h"
 #include <math.h>
 #include "atomic_ops.h"
+#include "stdlib.h"
+#include "string.h"
+#include "assert.h"
 
 volatile ticks** pfd_store;
 volatile ticks* _pfd_s;
@@ -133,8 +136,8 @@ print_abs_deviation(const abs_deviation_t* abs_dev)
   printf("\n ---- statistics:\n");
   PRINT("    avg : %-10.1f abs dev : %-10.1f std dev : %-10.1f num     : %llu", 
 	abs_dev->avg, abs_dev->abs_dev, abs_dev->std_dev, (llu) abs_dev->num_vals);
-  PRINT("    min : %-10.1f (element: %6llu)    max     : %-10.1f (element: %6llu)", abs_dev->min_val, 
-	(llu) abs_dev->min_val_idx, abs_dev->max_val, (llu) abs_dev->max_val_idx);
+  PRINT("    min : %-10.1f (element: %6llu)    max     : %-10.1f (element: %6llu)       med     : %6llu", abs_dev->min_val, 
+	(llu) abs_dev->min_val_idx, abs_dev->max_val, (llu) abs_dev->max_val_idx, abs_dev->med_val_idx);
   double v10p = 100 * 
     (1 - (abs_dev->num_vals - abs_dev->num_dev_10p) / (double) abs_dev->num_vals);
   double std_10pp = 100 * (1 - (abs_dev->avg_10p - abs_dev->std_dev_10p) / abs_dev->avg_10p);
@@ -163,6 +166,12 @@ print_abs_deviation(const abs_deviation_t* abs_dev)
 }
 
 #define PFD_VAL_UP_LIMIT 1500	/* do not consider values higher than this value */
+
+ticks cmp_vals(const void *a, const void *b) {
+  ticks *aa = (ticks *)a;
+  ticks *bb = (ticks *)b;
+  return *aa - *bb;
+}
 
 void
 get_abs_deviation(volatile ticks* vals, const size_t num_vals, abs_deviation_t* abs_dev)
@@ -313,4 +322,21 @@ get_abs_deviation(volatile ticks* vals, const size_t num_vals, abs_deviation_t* 
   abs_dev->abs_dev = adev;
   double stdev = sqrt(sum_stdev / num_vals);
   abs_dev->std_dev = stdev;
+
+  ticks *newvals = malloc(sizeof(vals[0]) * num_vals);
+  memcpy(newvals, vals, sizeof(vals[0]) * num_vals);
+
+  qsort(newvals, num_vals, sizeof(newvals[0]), cmp_vals);
+  abs_dev->med_val_idx = newvals[num_vals/2];
+  /*
+  for (i = 1; i < num_vals; i++) {
+    assert(newvals[i-1] <= newvals[i]);
+    if (newvals[i-1] < newvals[i])
+      printf("Value is %llu for idx %d\n", newvals[i], i);
+    else if (i == num_vals/2)
+      printf("Mid Value is %llu for idx %d\n", newvals[i], i);
+
+  }
+  */
+  free(newvals);
 }

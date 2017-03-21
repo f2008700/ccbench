@@ -112,6 +112,7 @@ typedef struct abs_deviation
   uint64_t min_val_idx;
   double max_val;
   uint64_t max_val_idx;
+  uint64_t med_val_idx;
   uint32_t num_dev_10p;
   uint32_t num_dev_25p;
   uint32_t num_dev_50p;

@@ -1063,6 +1063,142 @@ main(int argc, char **argv)
 	    }
 	  break;
 	case PROFILER:		/* 30 */
+	case STORE_ON_MODIFIED_MINE: /* 35 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		store_0_eventually(cache_line, reps);
+		B1;		/* BARRIER 1 */
+		store_0_eventually(cache_line, reps);
+		break;
+	      default:
+		B1;		/* BARRIER 1 */
+		break;
+	      }
+	    break;
+	  }
+	case LOAD_FROM_MODIFIED_MINE: /* 36 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		store_0_eventually(cache_line, reps);
+		B1;		
+		sum += load_0_eventually(cache_line, reps);
+		break;
+	      case 1:
+		B1;			/* BARRIER 1 */
+		break;
+	      default:
+		B1;
+		break;
+	      }
+	    break;
+	  }
+	case LOAD_FROM_EXCLUSIVE_MINE: /* 37 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		sum += load_0_eventually(cache_line, reps);
+		B1;			/* BARRIER 1 */
+		sum += load_0_eventually(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
+		break;
+	      case 1:
+		B1;			/* BARRIER 1 */
+		break;
+	      default:
+		B1;			/* BARRIER 1 */
+		break;
+	      }
+	    break;
+	  }
+	case LOAD_FROM_SHARED_MINE:	/* 38 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		sum += load_0_eventually(cache_line, reps);
+		B1;			/* BARRIER 1 */
+		B2;			/* BARRIER 2 */
+		sum += load_0_eventually(cache_line, reps);
+		break;
+	      case 1:
+		B1;			/* BARRIER 1 */
+		sum += load_0_eventually(cache_line, reps);
+		B2;			/* BARRIER 2 */
+		break;
+	      case 2:
+		B1;			/* BARRIER 1 */
+		B2;			/* BARRIER 2 */
+		break;
+	      default:
+		B1;			/* BARRIER 1 */
+		sum += load_0_eventually_no_pf(cache_line);
+		B2;			/* BARRIER 2 */
+		break;
+	      }
+
+	    if (!test_flush)
+	      {
+		cache_line += test_stride;
+	      }
+	    break;
+	  }
+	case LOAD_FROM_OWNED_MINE:	/* 39 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		store_0_eventually(cache_line, reps);
+		B1;			/* BARRIER 1 */
+		B2;			/* BARRIER 2 */
+		break;
+	      case 1:
+		B1;			/* BARRIER 1 */
+		sum += load_0_eventually(cache_line, reps);
+		B2;			/* BARRIER 2 */
+		sum += load_0_eventually(cache_line, reps);
+		break;
+	      case 2:
+		B1;			/* BARRIER 1 */
+		B2;			/* BARRIER 2 */
+		break;
+	      default:
+		B1;			/* BARRIER 1 */
+		B2;			/* BARRIER 2 */
+		break;
+	      }
+	    break;
+	  }
+	case CAS_ON_MODIFIED_MINE: /* 40 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		store_0_eventually(cache_line, reps);
+		if (test_ao_success)
+		  {
+		    cache_line->word[0] = reps & 0x01;
+		  }
+		B1;		/* BARRIER 1 */
+		sum += cas_0_eventually(cache_line, reps);
+		break;
+	      case 1:
+		B1;		/* BARRIER 1 */
+		break;
+	      default:
+		B1;		/* BARRIER 1 */
+		break;
+	      }
+	    break;
+	  }
 	default:
 	  PFDI(0);
 	  asm volatile ("");
