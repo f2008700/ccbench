@@ -1,10 +1,80 @@
-[01]     min : 0.0        (element:      0)    max     : 206.0      (element:  21533)       med     :     88
-[01]     min : 0.0        (element:      0)    max     : 111.0      (element:  29970)       med     :     87
-[01]     min : 0.0        (element:      0)    max     : 419.0      (element:  28766)       med     :     88
-[01]     min : 0.0        (element:      0)    max     : 162.0      (element:    291)       med     :     87
-[01]     min : 0.0        (element:      0)    max     : 265.0      (element:  32998)       med     :     88
-[01]     min : 0.0        (element:      0)    max     : 415.0      (element:  15103)       med     :     88
-[01]     min : 0.0        (element:      0)    max     : 269.0      (element:  39902)       med     :     85
-[01]     min : 0.0        (element:      0)    max     : 251.0      (element:  13233)       med     :     85
-[01]     min : 0.0        (element:      0)    max     : 260.0      (element:  47652)       med     :     88
-[01]     min : 0.0        (element:      0)    max     : 607.0      (element:  18947)       med     :     88
+[00]  *** Core  0 ************************************************************************************
+[00]     avg : 60.4       abs dev : 1.2        std dev : 1.5        num     : 50000
+[00]     min : 53.0       (element:    119)    max     : 90.0       (element:  13177)       med     :     61
+[00]   0-10% : 49598      (  99.2%  |  avg:    60.4  |  abs dev:    1.1  |  std dev:    1.4 =   2.3% )
+[00]  10-25% : 399        (   0.8%  |  avg:    55.8  |  abs dev:    4.7  |  std dev:    6.2 =  11.1% )
+[00]  25-50% : 3          (   0.0%  |  avg:    84.3  |  abs dev:    4.2  |  std dev:    4.9 =   5.8% )
+[00]  50-75% : 0          (   0.0%  |  avg:    -nan  |  abs dev:   -nan  |  std dev:   -nan =  -nan% )
+[00] 75-100% : 0          (   0.0%  |  avg:    -nan  |  abs dev:   -nan  |  std dev:   -nan =  -nan% )
+[01]  *** Core  1 ************************************************************************************
+[01]     avg : 75.5       abs dev : 2.0        std dev : 3.3        num     : 50000
+[01]     min : 0.0        (element:    142)    max     : 493.0      (element:      0)       med     :     76
+[01]   0-10% : 49906      (  99.8%  |  avg:    75.5  |  abs dev:    2.0  |  std dev:    2.5 =   3.3% )
+[01]  10-25% : 82         (   0.2%  |  avg:    87.1  |  abs dev:    2.6  |  std dev:    3.5 =   4.1% )
+[01]  25-50% : 5          (   0.0%  |  avg:   104.2  |  abs dev:    3.8  |  std dev:    4.6 =   4.4% )
+[01]  50-75% : 3          (   0.0%  |  avg:   125.0  |  abs dev:    4.7  |  std dev:    5.1 =   4.1% )
+[01] 75-100% : 4          (   0.0%  |  avg:   212.2  |  abs dev:  140.4  |  std dev:  179.0 =  84.3% )
+[00]  ** Results from Core 0 : store to invalid
+[00]  ** Results from Core 1 : load from modified (makes it owned, if owned state supported)
+[01]  value of cl is 0          / sum is 0
+[00]  value of cl is 0          / sum is 0
+[00]  *** Core  0 ************************************************************************************
+[00]     avg : 53.0       abs dev : 2.5        std dev : 3.0        num     : 50000
+[00]     min : 44.0       (element:     15)    max     : 82.0       (element:      0)       med     :     52
+[00]   0-10% : 46567      (  93.1%  |  avg:    53.5  |  abs dev:    2.2  |  std dev:    2.5 =   4.6% )
+[00]  10-25% : 3427       (   6.9%  |  avg:    46.3  |  abs dev:    1.2  |  std dev:    1.5 =   3.3% )
+[00]  25-50% : 5          (   0.0%  |  avg:    71.2  |  abs dev:    3.8  |  std dev:    4.5 =   6.3% )
+[00]  50-75% : 1          (   0.0%  |  avg:    82.0  |  abs dev:    0.0  |  std dev:    0.0 =   0.0% )
+[00] 75-100% : 0          (   0.0%  |  avg:    -nan  |  abs dev:   -nan  |  std dev:   -nan =  -nan% )
+[01]  *** Core  1 ************************************************************************************
+[01]     avg : 75.0       abs dev : 2.8        std dev : 3.6        num     : 50000
+[01]     min : 70.0       (element:     12)    max     : 164.0      (element:  30474)       med     :     76
+[01]   0-10% : 49404      (  98.8%  |  avg:    74.8  |  abs dev:    2.7  |  std dev:    3.3 =   4.4% )
+[01]  10-25% : 583        (   1.2%  |  avg:    84.1  |  abs dev:    0.2  |  std dev:    0.7 =   0.8% )
+[01]  25-50% : 5          (   0.0%  |  avg:   103.4  |  abs dev:    6.7  |  std dev:    7.2 =   7.0% )
+[01]  50-75% : 3          (   0.0%  |  avg:   117.0  |  abs dev:    4.0  |  std dev:    4.2 =   3.6% )
+[01] 75-100% : 5          (   0.0%  |  avg:   154.4  |  abs dev:    4.7  |  std dev:    6.4 =   4.1% )
+[00]  ** Results from Core 0 : store to invalid
+[00]  ** Results from Core 1 : load from modified (makes it owned, if owned state supported)
+[00]  value of cl is 0          / sum is 0
+[01]  value of cl is 0          / sum is 0
+[00]  *** Core  0 ************************************************************************************
+[00]     avg : 48.4       abs dev : 2.4        std dev : 3.2        num     : 50000
+[00]     min : 0.0        (element:   5777)    max     : 79.0       (element:      0)       med     :     49
+[00]   0-10% : 44593      (  89.2%  |  avg:    48.3  |  abs dev:    1.8  |  std dev:    2.3 =   4.8% )
+[00]  10-25% : 5399       (  10.8%  |  avg:    49.4  |  abs dev:    6.7  |  std dev:    6.9 =  13.9% )
+[00]  25-50% : 6          (   0.0%  |  avg:    61.5  |  abs dev:    0.8  |  std dev:    1.1 =   1.8% )
+[00]  50-75% : 1          (   0.0%  |  avg:    79.0  |  abs dev:    0.0  |  std dev:    0.0 =   0.0% )
+[00] 75-100% : 1          (   0.0%  |  avg:     0.0  |  abs dev:    0.0  |  std dev:    0.0 =  -nan% )
+[01]  *** Core  1 ************************************************************************************
+[01]     avg : 75.3       abs dev : 2.4        std dev : 3.0        num     : 50000
+[01]     min : 67.0       (element:  19144)    max     : 138.0      (element:      0)       med     :     76
+[01]   0-10% : 49162      (  98.3%  |  avg:    75.1  |  abs dev:    2.3  |  std dev:    2.8 =   3.7% )
+[01]  10-25% : 834        (   1.7%  |  avg:    84.0  |  abs dev:    0.1  |  std dev:    0.8 =   0.9% )
+[01]  25-50% : 2          (   0.0%  |  avg:   105.0  |  abs dev:    6.0  |  std dev:    6.0 =   5.7% )
+[01]  50-75% : 1          (   0.0%  |  avg:   123.0  |  abs dev:    0.0  |  std dev:    0.0 =   0.0% )
+[01] 75-100% : 1          (   0.0%  |  avg:   138.0  |  abs dev:    0.0  |  std dev:    0.0 =   0.0% )
+[00]  ** Results from Core 0 : store to invalid
+[00]  ** Results from Core 1 : load from modified (makes it owned, if owned state supported)
+[00]  value of cl is 0          / sum is 0
+[01]  value of cl is 0          / sum is 0
+[00]     min : 41.0       (element:      9)    max     : 150.0      (element:  25859)       med     :     49
+[01]     min : 0.0        (element:  29434)    max     : 200.0      (element:  10061)       med     :     76
+[00]     min : 0.0        (element:   8652)    max     : 322.0      (element:   8933)       med     :     49
+[01]     min : 70.0       (element:     24)    max     : 144.0      (element:   8933)       med     :     76
+[00]     min : 41.0       (element:    195)    max     : 115.0      (element:      0)       med     :     52
+[01]     min : 8.0        (element:  31690)    max     : 114.0      (element:   4836)       med     :     76
+[00]     min : 0.0        (element:  35608)    max     : 91.0       (element:      0)       med     :     52
+[01]     min : 67.0       (element:  14666)    max     : 200.0      (element:  29234)       med     :     76
+[00]     min : 0.0        (element:  32262)    max     : 91.0       (element:      0)       med     :     58
+[01]     min : 14.0       (element:  19143)    max     : 195.0      (element:  16053)       med     :     76
+[00]     min : 0.0        (element:  33416)    max     : 97.0       (element:  33238)       med     :     52
+[01]     min : 70.0       (element:     20)    max     : 162.0      (element:  20066)       med     :     76
+[00]     min : 50.0       (element:     82)    max     : 114.0      (element:  12066)       med     :     58
+[01]     min : 0.0        (element:  43972)    max     : 126.0      (element:  27896)       med     :     73
+[00]     min : 50.0       (element:      5)    max     : 102.0      (element:      0)       med     :     58
+[01]     min : 25.0       (element:  17577)    max     : 147.0      (element:  28440)       med     :     73
+[00]     min : 44.0       (element:    832)    max     : 76.0       (element:      0)       med     :     52
+[01]     min : 70.0       (element:     52)    max     : 191.0      (element:  24811)       med     :     76
+[00]     min : 53.0       (element:    110)    max     : 144.0      (element:  37771)       med     :     61
+[01]     min : 0.0        (element:  37770)    max     : 121.0      (element:  17233)       med     :     76

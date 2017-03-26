@@ -1,6 +1,10 @@
-[00]     min : 32.0       (element:   1561)    max     : 80.0       (element:   5727)       med     :     58
-[00]     min : 32.0       (element:   4018)    max     : 81.0       (element:   1359)       med     :     58
-[00]     min : 33.0       (element:     31)    max     : 81.0       (element:   1248)       med     :     58
-[00]     min : 33.0       (element:      7)    max     : 96.0       (element:    355)       med     :     58
-[00]     min : 0.0        (element:   6953)    max     : 93.0       (element:   3507)       med     :     58
-[00]     min : 33.0       (element:     23)    max     : 85.0       (element:   3424)       med     :     58
+[00]     min : 0.0        (element:   2540)    max     : 76.0       (element:  66800)       med     :     35
+[00]     min : 0.0        (element:  75637)    max     : 232.0      (element:  44540)       med     :     35
+[00]     min : 29.0       (element:  20860)    max     : 57.0       (element:  90134)       med     :     35
+[00]     min : 0.0        (element:  78913)    max     : 73.0       (element:   9828)       med     :     35
+[00]     min : 29.0       (element:  53967)    max     : 91.0       (element:  34911)       med     :     35
+[00]     min : 0.0        (element:  37301)    max     : 72.0       (element:  71678)       med     :     35
+[00]     min : 0.0        (element:  67413)    max     : 88.0       (element:  21218)       med     :     35
+[00]     min : 28.0       (element:  30740)    max     : 253.0      (element:  30573)       med     :     35
+[00]     min : 0.0        (element:  89067)    max     : 90.0       (element:  60113)       med     :     35
+[00]     min : 0.0        (element:  11290)    max     : 88.0       (element:  91996)       med     :     35

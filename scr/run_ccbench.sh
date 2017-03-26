@@ -6,7 +6,8 @@ numcpu=$2
 cpu0=$3
 cpu1=$4
 cpu2=$5
-grepp=$6
+offset=$6
+grepp=$7
 while [ $x -lt 11 ];
 do
 	#echo Hello $testcase $cpu0 $cpu1 $cpu2
@@ -23,7 +24,8 @@ do
 			echo "Running on one cpu"
 			./ccbench -t $testcase -c 1 -x $cpu0 -e 8 -s 0 -r 50000 -f -u | grep med | grep "$grepp" | tee -a "$testcase"_"$cpu0".txt
 	else 
-		echo "Incorrect argument for num cpus"
+		./ccbench -t $testcase -c $numcpu -x $cpu0 -y $cpu1 -z $cpu2 -o $offset -e 8 -s 0 -r 50000 -f -u | grep med | grep "$grepp" | tee -a "$testcase"_"$cpu0"_"$cpu1"_"$cpu2"_o"$offset".txt
+		#echo "Incorrect argument for num cpus"
 	fi
 	#./ccbench -t $testcase -c 3 -x $cpu0 -y $cpu1 -z $cpu2 -e 8 -s 0 -r 50000
 	#echo Bye $testcase $cpu0 $cpu1 $cpu2

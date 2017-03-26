@@ -123,6 +123,10 @@ typedef enum
     LOAD_FROM_SHARED_MINE,
     LOAD_FROM_OWNED_MINE,
     CAS_ON_MODIFIED_MINE,
+    CAS_ON_EXCLUSIVE,
+    FAI_ON_EXCLUSIVE,
+    TAS_ON_EXCLUSIVE,
+    SWAP_ON_EXCLUSIVE,
   } moesi_type_t;
 
 const char* moesi_type_des[] =

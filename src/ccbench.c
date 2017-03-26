@@ -1199,6 +1199,118 @@ main(int argc, char **argv)
 	      }
 	    break;
 	  }
+	case CAS_ON_EXCLUSIVE: /* 41 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		sum += load_0_eventually(cache_line, reps);
+		B1;			/* BARRIER 1 */
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
+		break;
+	      case 1:
+		B1;			/* BARRIER 1 */
+		sum += cas_0_eventually(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
+		break;
+	      default:
+		B1;			/* BARRIER 1 */
+		break;
+	      }
+	    break;
+	  }
+	case FAI_ON_EXCLUSIVE: /* 42 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		sum += load_0_eventually(cache_line, reps);
+		B1;			/* BARRIER 1 */
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
+		break;
+	      case 1:
+		B1;			/* BARRIER 1 */
+		sum += fai(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
+		break;
+	      default:
+		B1;			/* BARRIER 1 */
+		break;
+	      }
+	    break;
+	  }
+	case TAS_ON_EXCLUSIVE: /* 43 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		sum += load_0_eventually(cache_line, reps);
+		B1;			/* BARRIER 1 */
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
+		break;
+	      case 1:
+		B1;			/* BARRIER 1 */
+		sum += tas(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
+		break;
+	      default:
+		B1;			/* BARRIER 1 */
+		break;
+	      }
+	    break;
+	  }
+	case SWAP_ON_EXCLUSIVE: /* 44 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		sum += load_0_eventually(cache_line, reps);
+		B1;			/* BARRIER 1 */
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
+		break;
+	      case 1:
+		B1;			/* BARRIER 1 */
+		sum += swap(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
+		break;
+	      default:
+		B1;			/* BARRIER 1 */
+		break;
+	      }
+	    break;
+	  }
 	default:
 	  PFDI(0);
 	  asm volatile ("");
@@ -1892,6 +2004,7 @@ load_0_eventually_lf(volatile cache_line_t* cl, volatile uint64_t reps)
     {
       cln = clrand();
       volatile uint32_t* w = &cl[cln].word[0];
+      _mm_mfence();
       PFDI(0);
       val = w[0];
       _mm_lfence();

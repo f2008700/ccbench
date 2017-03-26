@@ -1,0 +1,2 @@
+[02]     min : 0.0        (element: 153079)    max     : 345.0      (element: 861136)       med     :     34
+[02]     min : 0.0        (element:  20785)    max     : 1131.0     (element: 855950)       med     :     34
