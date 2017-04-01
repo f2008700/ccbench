@@ -127,6 +127,7 @@ typedef enum
     FAI_ON_EXCLUSIVE,
     TAS_ON_EXCLUSIVE,
     SWAP_ON_EXCLUSIVE,
+    TAS_SPINLOCK,
   } moesi_type_t;
 
 const char* moesi_type_des[] =
@@ -165,6 +166,17 @@ const char* moesi_type_des[] =
     "PROFILER",
     "PAUSE",
     "NOP",
+    "STORE_ON_MODIFIED_MINE",
+    "LOAD_FROM_MODIFIED_MINE",
+    "LOAD_FROM_EXCLUSIVE_MINE",
+    "LOAD_FROM_SHARED_MINE",
+    "LOAD_FROM_OWNED_MINE",
+    "CAS_ON_MODIFIED_MINE",
+    "CAS_ON_EXCLUSIVE",
+    "FAI_ON_EXCLUSIVE",
+    "TAS_ON_EXCLUSIVE",
+    "SWAP_ON_EXCLUSIVE",
+    "TAS_SPINLOCK"
   };
 
 

@@ -75,7 +75,7 @@ static uint32_t swap(volatile cache_line_t* cl, volatile uint64_t reps);
 
 static size_t parse_size(char* optarg);
 static void create_rand_list_cl(volatile uint64_t* list, size_t n);
-
+static void barrier_join(int n);
 
 int
 main(int argc, char **argv) 
@@ -395,8 +395,25 @@ main(int argc, char **argv)
   /*  *********************************************************************************\/ */
 
   uint64_t sum = 0;
-
+  
   volatile uint64_t reps;
+  
+            volatile ticks **start_time, **end_time, **diff_time;
+	    //long int **diff_time;
+            start_time = (volatile ticks**)malloc(sizeof(ticks*) * test_cores);
+            start_time[0] = (volatile ticks*)malloc(sizeof(ticks) * test_cores * test_reps);
+            for(i=0;i<test_cores;i++) 
+                start_time[i] = start_time[0] + i*test_reps;
+          
+            end_time = (volatile ticks**)malloc(sizeof(ticks*) * test_cores);
+            end_time[0] = (volatile ticks*)malloc(sizeof(ticks) * test_cores * test_reps);
+            for(i=0;i<test_cores;i++) 
+                end_time[i] = end_time[0] + i*test_reps;
+
+            diff_time = (volatile ticks**)malloc(sizeof(volatile ticks*) * test_cores);
+            diff_time[0] = (volatile ticks*)malloc(sizeof(volatile ticks) * test_cores * test_reps);
+            for(i=0;i<test_cores;i++) 
+                diff_time[i] = diff_time[0] + i*test_reps;
   for (reps = 0; reps < test_reps; reps++)
     {
       if (test_flush)
@@ -1311,6 +1328,95 @@ main(int argc, char **argv)
 	      }
 	    break;
 	  }
+	case TAS_SPINLOCK: /* 45 */
+	  {
+	    volatile uint8_t* b = (volatile uint8_t*) cache_line->word; 
+            //volatile ticks *st[2], *et[2];	    
+            int sum0 = 0;
+	    switch (ID)
+	      {
+	      case 0:
+		sum0 = 0;
+		//sum1 = 0;
+	        _mm_mfence();
+		b[0] = 0;
+	        _mm_mfence();
+		barrier_join(test_cores-1);		/* BARRIER 1 */
+		start_time[0][reps] = getticks();
+		_mm_mfence();
+	        while (tas_uint8(b) == 255) {
+                    _mm_pause();
+	        }
+	        for (i=0;i<10000;i++) 
+		    sum0 = sum0 + 1;
+	        _mm_mfence();
+		b[0] = 0;
+	        _mm_mfence();
+		end_time[0][reps] = getticks();
+		break;
+	      case 1:
+		sum0 = 0;
+		//sum1 = 0;
+	        _mm_mfence();
+		barrier_join(test_cores-1);		/* BARRIER 1 */
+
+		start_time[1][reps] = getticks();
+		_mm_mfence();
+		while (tas_uint8(b) == 255) { 
+                   _mm_pause();
+	        }
+	        for (i=0;i<10000;i++) 
+		    sum0 = sum0 + 1;
+		    //sum1 = sum0 + sum1;
+	        _mm_mfence();
+		b[0] = 0;
+	        _mm_mfence();
+		end_time[1][reps] = getticks();
+		break;
+	      case 2:
+		sum0 = 0;
+		//sum1 = 0;
+	        _mm_mfence();
+		barrier_join(test_cores-1);		/* BARRIER 1 */
+
+		start_time[2][reps] = getticks();
+		_mm_mfence();
+		while (tas_uint8(b) == 255) { 
+                   _mm_pause();
+	        }
+	        for (i=0;i<10000;i++) 
+	            sum0 = sum0 + 1;
+		    //sum0 = sum0 + sum1;
+	        _mm_mfence();
+		b[0] = 0;
+	        _mm_mfence();
+		end_time[2][reps] = getticks();
+		break;
+	      case 3:
+		sum0 = 0;
+		//sum1 = 0;
+	        _mm_mfence();
+		barrier_join(test_cores-1);	/* BARRIER 1 */
+
+		start_time[3][reps] = getticks();
+		_mm_mfence();
+		while (tas_uint8(b) == 255) { 
+                   _mm_pause();
+	        }
+	        for (i=0;i<10000;i++)
+		    sum0 = sum0 + 1;	
+		    //sum1 = sum0 + sum1;
+	        _mm_mfence();
+		b[0] = 0;
+	        _mm_mfence();
+		end_time[3][reps] = getticks();
+		break;
+	      default:
+		barrier_join(test_cores-1);			/* BARRIER 1 */
+		//break;
+	      }
+	    break;
+	  }
 	default:
 	  PFDI(0);
 	  asm volatile ("");
@@ -1318,7 +1424,7 @@ main(int argc, char **argv)
 	  break;
 	}
 
-      B3;			/* BARRIER 3 */
+      //B3;			/* BARRIER 3 */
     }
 
   if (!test_verbose)
@@ -1327,9 +1433,10 @@ main(int argc, char **argv)
     }
 
   uint32_t id;
+  int j;
   for (id = 0; id < test_cores; id++)
     {
-      if (ID == id && ID < 3)
+      if (ID == id && ID < 8)
 	{
 	  switch (test_test)
 	    {
@@ -1364,6 +1471,23 @@ main(int argc, char **argv)
 		{
 		  PRINT(" *** Core %2d ************************************************************************************", ID);
 		  PFDPN(0, test_reps, test_print);
+		}
+	      break;
+	    case TAS_SPINLOCK:
+	      if (ID < 8)
+		{
+		  PRINT(" *** Core %2d ************************************************************************************", ID);
+		  //for (i=0;i<2;i++) {
+		      for(j=0;j<test_reps;j++) {
+		         diff_time[ID][j] = (long int)(end_time[ID][j] - start_time[ID][j]);
+			      // printf("Time taken by core %d is %lu\n", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
+		          //printf("Time taken by core %d is %lu\n ", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
+		      }
+                  abs_deviation_t ad;							
+                  get_abs_deviation(diff_time[ID], test_reps, &ad);
+                  print_abs_deviation(&ad);						
+		  //}
+		 // PFDPN(0, test_reps, test_print);
 		}
 	      break;
 	    default:
@@ -1692,6 +1816,43 @@ main(int argc, char **argv)
   barriers_term(ID);
   return 0;
 
+}
+
+static void barrier_join(int n) {
+  switch(n) {
+    case 0:
+      B0;
+      break;      
+    case 1:
+      B1;
+      break;      
+    case 2:
+      B3;
+      break; 
+    case 4:
+      B4;
+      break; 
+    case 5:
+      B5;
+      break; 
+    case 6:
+      B6;
+      break; 
+    case 7:
+      B7;
+      break; 
+    case 8:
+      B8;
+      break; 
+    case 9:
+      B9;
+      break; 
+    case 10:
+      B10;
+      break;
+    default:
+      break; 
+  }     
 }
 
 uint32_t
