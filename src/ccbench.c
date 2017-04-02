@@ -1332,7 +1332,7 @@ main(int argc, char **argv)
 	  {
 	    volatile uint8_t* b = (volatile uint8_t*) cache_line->word; 
             //volatile ticks *st[2], *et[2];	    
-            int sum0 = 0;
+            volatile uint64_t sum0 = 0;
 	    switch (ID)
 	      {
 	      case 0:
@@ -1347,12 +1347,16 @@ main(int argc, char **argv)
 	        while (tas_uint8(b) == 255) {
                     _mm_pause();
 	        }
-	        for (i=0;i<10000;i++) 
+	        for (i=0;i<10;i++) {
 		    sum0 = sum0 + 1;
+	            //_mm_mfence();
+	        }
+
 	        _mm_mfence();
 		b[0] = 0;
 	        _mm_mfence();
 		end_time[0][reps] = getticks();
+	        _mm_mfence();
 		break;
 	      case 1:
 		sum0 = 0;
@@ -1365,8 +1369,10 @@ main(int argc, char **argv)
 		while (tas_uint8(b) == 255) { 
                    _mm_pause();
 	        }
-	        for (i=0;i<10000;i++) 
+	        for (i=0;i<10;i++) {
 		    sum0 = sum0 + 1;
+	            //_mm_mfence();
+		}
 		    //sum1 = sum0 + sum1;
 	        _mm_mfence();
 		b[0] = 0;
@@ -1384,13 +1390,16 @@ main(int argc, char **argv)
 		while (tas_uint8(b) == 255) { 
                    _mm_pause();
 	        }
-	        for (i=0;i<10000;i++) 
+	        for (i=0;i<10;i++) { 
 	            sum0 = sum0 + 1;
+	            //_mm_mfence();
+		}
 		    //sum0 = sum0 + sum1;
 	        _mm_mfence();
 		b[0] = 0;
 	        _mm_mfence();
 		end_time[2][reps] = getticks();
+	        _mm_mfence();
 		break;
 	      case 3:
 		sum0 = 0;
@@ -1403,13 +1412,16 @@ main(int argc, char **argv)
 		while (tas_uint8(b) == 255) { 
                    _mm_pause();
 	        }
-	        for (i=0;i<10000;i++)
+	        for (i=0;i<10;i++) {
 		    sum0 = sum0 + 1;	
+	           // _mm_mfence();
+		}
 		    //sum1 = sum0 + sum1;
 	        _mm_mfence();
 		b[0] = 0;
 	        _mm_mfence();
 		end_time[3][reps] = getticks();
+	        _mm_mfence();
 		break;
 	      default:
 		barrier_join(test_cores-1);			/* BARRIER 1 */
@@ -1483,7 +1495,8 @@ main(int argc, char **argv)
 			      // printf("Time taken by core %d is %lu\n", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
 		          //printf("Time taken by core %d is %lu\n ", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
 		      }
-                  abs_deviation_t ad;							
+                  abs_deviation_t ad;						
+	          printf("\nThe value of test_reps is %d", test_reps);	  
                   get_abs_deviation(diff_time[ID], test_reps, &ad);
                   print_abs_deviation(&ad);						
 		  //}
