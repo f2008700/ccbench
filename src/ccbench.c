@@ -37,6 +37,7 @@ cpu_set_t cpus;
 #endif
 
 moesi_type_t test_test = DEFAULT_TEST;
+char     test_list_cores[1000];
 uint32_t test_cores = DEFAULT_CORES;
 uint32_t test_reps = DEFAULT_REPS;
 uint32_t test_core1 = DEFAULT_CORE1;
@@ -198,6 +199,10 @@ main(int argc, char **argv)
 	case 't':
 	  test_test = atoi(optarg);
 	  break;
+        case 'x':
+          strcpy(test_list_cores, optarg);
+          break;
+          /*
 	case 'x':
 	  test_core1 = atoi(optarg);
 	  break;
@@ -210,6 +215,7 @@ main(int argc, char **argv)
 	case 'o':
 	  test_core_others = atoi(optarg);
 	  break;
+          */
 	case 'f':
 	  test_flush = 1;
 	  break;
@@ -240,7 +246,20 @@ main(int argc, char **argv)
 	  exit(1);
 	}
     }
+    int  count = 0;
+    int arr[56];
+  for (char *p = strtok(test_list_cores ,","); p != NULL; p = strtok(NULL, ",")) {
+        arr[count] = atoi( p );
+        count++;
+        printf("%s\n", p );
+        printf("List is of length %d and %d\n", count,arr[count-1]);
+  }
+  //int *arr = (int *) malloc( sizeof(int) * count ); 
+  //int ii =0;
+  return 0;
 
+  
+  
 
   test_cache_line_num = test_mem_size / sizeof(cache_line_t);
 

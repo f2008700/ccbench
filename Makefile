@@ -17,10 +17,11 @@ CC = gcc
 PLATFORM_NUMA = 1
 endif
 
-ifeq ($(UNAME), betelgeuse.cs.wisc.edu)
+ifeq ($(UNAME), dodeca)
 #ifeq ($(UNAME), node-0.node.superpages-pg0.utah.cloudlab.us)
 PLATFORM = XEON2
 CC = gcc
+PLATFORM_NUMA = 1
 endif
 
 ifeq ($(UNAME), maglite)
