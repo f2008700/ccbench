@@ -50,6 +50,7 @@ uint32_t test_print = DEFAULT_PRINT;
 uint32_t test_stride = DEFAULT_STRIDE;
 uint32_t test_fence = DEFAULT_FENCE;
 uint32_t test_ao_success = DEFAULT_AO_SUCCESS;
+uint32_t test_ao_unsuccess = DEFAULT_AO_UNSUCCESS;
 size_t   test_mem_size = CACHE_LINE_NUM * sizeof(cache_line_t);
 uint32_t test_cache_line_num = CACHE_LINE_NUM;
 uint32_t test_lfence = DEFAULT_LFENCE;
@@ -192,6 +193,7 @@ main(int argc, char **argv)
 	  exit(0);
 	case 'c':
 	  test_cores = atoi(optarg);
+          assert(test_cores > 0);
 	  break;
 	case 'r':
 	  test_reps = atoi(optarg);
@@ -233,6 +235,9 @@ main(int argc, char **argv)
 	  test_ao_success = 1;
 	  break;
 	case 'v':
+	  test_ao_unsuccess = 1;
+	  break;
+	case 'w':
 	  test_verbose = 1;
 	  break;
 	case 'p':
@@ -246,7 +251,8 @@ main(int argc, char **argv)
 	  exit(1);
 	}
     }
-    int  count = 0;
+    // 757  
+  int  count = 0;
     int arr[56];
   for (char *p = strtok(test_list_cores ,","); p != NULL; p = strtok(NULL, ",")) {
         arr[count] = atoi( p );
@@ -256,10 +262,7 @@ main(int argc, char **argv)
   }
   //int *arr = (int *) malloc( sizeof(int) * count ); 
   //int ii =0;
-  return 0;
-
-  
-  
+  //return 0;
 
   test_cache_line_num = test_mem_size / sizeof(cache_line_t);
 
@@ -366,7 +369,9 @@ main(int argc, char **argv)
   rank = 0;
 
  fork_done:
-  ID = rank;
+  ID = arr[rank];
+  size_t core = ID;
+/*  ID = rank;
   size_t core = 0;
   switch (ID)
     {
@@ -381,7 +386,7 @@ main(int argc, char **argv)
       break;
     default:
       core = ID - test_core_others;
-    }
+    }*/
 
 #if defined(NIAGARA)
   if (test_cores <= 8 && test_cores > 3)
@@ -395,6 +400,7 @@ main(int argc, char **argv)
 #endif
 
   set_cpu(core);
+  printf("%lu and %d\n", core, getpid());
 
 #if defined(__tile__)
   tmc_cmem_init(0);		/*   initialize shared memory */
@@ -403,10 +409,10 @@ main(int argc, char **argv)
   volatile uint64_t* cl = (volatile uint64_t*) cache_line;
 
   B0;
-  if (ID < 3)
-    {
+/*  if (ID < 3)
+    {*/
       PFDINIT(test_reps);
-    }
+/*    }*/
   B0;
 
   /* /\********************************************************************************* */
@@ -808,7 +814,7 @@ main(int argc, char **argv)
 	  }
 	case CAS_ON_MODIFIED: /* 16 */
 	  {
-	    switch (ID)
+/*	    switch (ID)
 	      {
 	      case 0:
 		store_0_eventually(cache_line, reps);
@@ -816,14 +822,36 @@ main(int argc, char **argv)
 		  {
 		    cache_line->word[0] = reps & 0x01;
 		  }
-		B1;		/* BARRIER 1 */
+		B1;		// BARRIER 1 //
 		break;
 	      case 1:
-		B1;		/* BARRIER 1 */
+		B1;		// BARRIER 1 //
 		sum += cas_0_eventually(cache_line, reps);
 		break;
 	      default:
-		B1;		/* BARRIER 1 */
+		B1;		// BARRIER 1 //
+		break;
+	      }
+	    break;*/
+	    switch (ID)
+	      {
+	      case 0:
+		store_0_eventually(cache_line, reps);
+		if (test_ao_success)
+		  {
+                    assert(!test_ao_unsuccess);
+		    cache_line->word[0] = reps & 0x01;
+		  }
+                if (test_ao_unsuccess)
+		  {
+                    assert(!test_ao_success);
+		    cache_line->word[0] = !(reps & 0x01);
+		  }
+		B(test_cores);
+		break;
+	      default:
+		B(test_cores);
+		sum += cas(cache_line, reps);
 		break;
 	      }
 	    break;
@@ -1465,10 +1493,11 @@ main(int argc, char **argv)
 
   uint32_t id;
   int j;
-  for (id = 0; id < test_cores; id++)
+/*  for (id = 0; id < test_cores; id++)*/
+  for (id = 0; id < 1; id++)
     {
-      if (ID == id && ID < 8)
-	{
+/*      if (ID == id && ID < 8)
+	{*/
 	  switch (test_test)
 	    {
 	    case STORE_ON_OWNED_MINE:
@@ -1526,7 +1555,7 @@ main(int argc, char **argv)
 	      PRINT(" *** Core %2d ************************************************************************************", ID);
 	      PFDPN(0, test_reps, test_print);
 	    }
-	}
+/*	}*/
       B0;
     }
   B10;
