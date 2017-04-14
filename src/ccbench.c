@@ -369,8 +369,8 @@ main(int argc, char **argv)
   rank = 0;
 
  fork_done:
-  ID = arr[rank];
-  size_t core = ID;
+  ID = rank;
+  size_t core = arr[rank];
 /*  ID = rank;
   size_t core = 0;
   switch (ID)
