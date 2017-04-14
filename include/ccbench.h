@@ -195,6 +195,7 @@ const char* moesi_type_des[] =
 #define DEFAULT_LFENCE       0
 #define DEFAULT_SFENCE       0
 #define DEFAULT_AO_SUCCESS  0
+#define DEFAULT_AO_UNSUCCESS  0
 
 
 #define CACHE_LINE_MEM_FILE "/cache_line"
@@ -214,6 +215,7 @@ const char* moesi_type_des[] =
 #define B12 _mm_mfence(); barrier_wait(13, ID, test_cores); _mm_mfence();
 #define B13 _mm_mfence(); barrier_wait(14, ID, test_cores); _mm_mfence();
 #define B14 _mm_mfence(); barrier_wait(15, ID, test_cores); _mm_mfence();
+#define B(n) _mm_mfence(); barrier_wait(n, ID, test_cores); _mm_mfence();
 
 #define XSTR(s)                         STR(s)
 #define STR(s)                          #s
@@ -256,9 +258,10 @@ set_cpu(int cpu)
 #ifdef OPTERON
   uint32_t numa_node = cpu/6;
   numa_set_preferred(numa_node);  
-#elif defined(XEON)
-  uint32_t numa_node = 0;
-  if (cpu == 0)
+//#elif defined(XEON)
+#elif defined(XEON2)
+  uint32_t numa_node = 2;
+/*  if (cpu == 0)
     {
       numa_node = 4;
     }
@@ -269,7 +272,16 @@ set_cpu(int cpu)
   else
     {
       numa_node = cpu / 10;
+    }*/
+  if ((cpu < 14) || (cpu > 27 && cpu < 42))
+    {
+      numa_node = 0;
     }
+  else if ((cpu > 13 && cpu < 28) || (cpu > 41 && cpu < 56))
+    {
+      numa_node = 1;
+    }
+    assert(numa_node != 2);
   numa_set_preferred(numa_node);  
 #elif defined(PLATFORM_NUMA)
   printf("* You need to define how cores correspond to mem nodes in ccbench.h\n");
