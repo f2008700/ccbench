@@ -738,82 +738,92 @@ main(int argc, char **argv)
           /* CAS_ON_INVALID */
 	case CAS: /* 12 */
 	  {
-	    switch (ID)
-	      {
-	      case 0:
-		sum += cas_0_eventually(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		break;
-	      case 1:
-		B1;		/* BARRIER 1 */
-		sum += cas_0_eventually(cache_line, reps);
-		break;
-	      default:
-		B1;		/* BARRIER 1 */
-		break;
-	      }
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		sum += cas_0_eventually(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += cas_0_eventually(cache_line, reps);
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      }
+	    B(test_cores)
+	    sum += cas_0_eventually(cache_line, reps);
 	    break;
 	  }
           /* FAI_ON_INVALID */
 	case FAI: /* 13 */
 	  {
-	    switch (ID)
-	      {
-	      case 0:
-		sum += fai(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		break;
-	      case 1:
-		B1;		/* BARRIER 1 */
-		sum += fai(cache_line, reps);
-		break;
-	      default:
-		B1;		/* BARRIER 1 */
-		break;
-	      }
-	    break;
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		sum += fai(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += fai(cache_line, reps);
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      }
+              B(test_cores);
+              sum += fai(cache_line, reps);
+              break;
+
 	  }
           /* TAS_ON_INVALID */
 	case TAS:		/* 14 */
 	  {
-	    switch (ID)
-	      {
-	      case 0:
-		sum += tas(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
-		break;
-	      case 1:
-		B1;		/* BARRIER 1 */
-		sum += tas(cache_line, reps);
-		_mm_mfence();
-		cache_line->word[0] = 0;
-		B2;		/* BARRIER 2 */
-		break;
-	      default:
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
-		break;
-	      }
-	    break;
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		sum += tas(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		B2;		/* BARRIER 2 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += tas(cache_line, reps);
+//		_mm_mfence();
+//		cache_line->word[0] = 0;
+//		B2;		/* BARRIER 2 */
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		B2;		/* BARRIER 2 */
+//		break;
+//	      }
+              B(test_cores);
+              sum += tas(cache_line, reps);
+              break;
 	  }
 	case SWAP: /* 15 */
 	  {
-	    switch (ID)
-	      {
-	      case 0:
-		sum += swap(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		break;
-	      case 1:
-		B1;		/* BARRIER 1 */
-		sum += swap(cache_line, reps);
-		break;
-	      default:
-		B1;		/* BARRIER 1 */
-		break;
-	      }
-	    break;
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		sum += swap(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += swap(cache_line, reps);
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      }
+            B(test_cores);
+            sum += swap(cache_line, reps);
+            break;
+
 	  }
 	case CAS_ON_MODIFIED: /* 16 */
 	  {
@@ -851,6 +861,7 @@ main(int argc, char **argv)
 		    cache_line->word[0] = !(reps & 0x01);
 		  }
 		B(test_cores);
+		sum += cas(cache_line, reps);
 		break;
 	      default:
 		B(test_cores);
@@ -881,6 +892,7 @@ main(int argc, char **argv)
 	      case 0:
 		store_0_eventually(cache_line, reps);
 		B(test_cores);
+		sum += fai(cache_line, reps);
 		break;
 	      default:
 		B(test_cores);
@@ -922,6 +934,7 @@ main(int argc, char **argv)
 		    _mm_mfence();
 		  }
 		B(test_cores);
+		sum += tas(cache_line, reps);
 		break;
 	      default:
 		B(test_cores);
@@ -952,13 +965,11 @@ main(int argc, char **argv)
 	      case 0:
 		store_0_eventually(cache_line, reps);
 		B(test_cores);
-		break;
-	      case 1:
-		B(test_cores);
 		sum += swap(cache_line, reps);
 		break;
 	      default:
 		B(test_cores);
+		sum += swap(cache_line, reps);
 		break;
 	      }
 	    break;
@@ -971,21 +982,18 @@ main(int argc, char **argv)
 		sum += load_0_eventually(cache_line, reps);
 		B(test_cores);
 		B(test_cores);
+		sum += cas_0_eventually(cache_line, reps);
 		break;
 	      case 1:
 		B(test_cores);
+		sum += load_0_eventually(cache_line, reps);
 		B(test_cores);
 		sum += cas_0_eventually(cache_line, reps);
 		break;
-	      case 2:
-		B(test_cores);
-		sum += load_0_eventually(cache_line, reps);
-		B(test_cores);
-		break;
 	      default:
 		B(test_cores);
-		sum += load_0_eventually_no_pf(cache_line);
 		B(test_cores);
+		sum += cas_0_eventually(cache_line, reps);
 		break;
 	      }
 	    break;
@@ -1022,21 +1030,18 @@ main(int argc, char **argv)
 		sum += load_0_eventually(cache_line, reps);
 		B(test_cores);
 		B(test_cores);
+		sum += fai(cache_line, reps);
 		break;
 	      case 1:
 		B(test_cores);
+		sum += load_0_eventually(cache_line, reps);
 		B(test_cores);
 		sum += fai(cache_line, reps);
 		break;
-	      case 2:
-		B(test_cores);
-		sum += load_0_eventually(cache_line, reps);
-		B(test_cores);
-		break;
 	      default:
 		B(test_cores);
-		sum += load_0_eventually_no_pf(cache_line);
 		B(test_cores);
+		sum += fai(cache_line, reps);
 		break;
 	      }
 	    break;
@@ -1062,18 +1067,13 @@ main(int argc, char **argv)
 		break;
 	      case 1:
 		B(test_cores);
-		B(test_cores);
-		sum += tas(cache_line, reps);
-		break;
-	      case 2:
-		B(test_cores);
 		sum += load_0_eventually(cache_line, reps);
 		B(test_cores);
 		break;
 	      default:
 		B(test_cores);
-		sum += load_0_eventually_no_pf(cache_line);
 		B(test_cores);
+		sum += tas(cache_line, reps);
 		break;
 	      }
 	    break;
@@ -1106,21 +1106,18 @@ main(int argc, char **argv)
 		sum += load_0_eventually(cache_line, reps);
 		B(test_cores);
 		B(test_cores);
+		sum += swap(cache_line, reps);
 		break;
 	      case 1:
 		B(test_cores);
+		sum += load_0_eventually(cache_line, reps);
 		B(test_cores);
 		sum += swap(cache_line, reps);
 		break;
-	      case 2:
-		B(test_cores);
-		sum += load_0_eventually(cache_line, reps);
-		B(test_cores);
-		break;
 	      default:
 		B(test_cores);
-		sum += load_0_eventually_no_pf(cache_line);
 		B(test_cores);
+		sum += swap(cache_line, reps);
 		break;
 	      }
 	    break;
@@ -1363,15 +1360,7 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B1;			/* BARRIER 1 */
-
-		if (!test_flush)
-		  {
-		    cache_line += test_stride;
-		  }
-		break;
-	      case 1:
-		B1;			/* BARRIER 1 */
+		B(test_cores);			/* BARRIER 1 */
 		sum += cas_0_eventually(cache_line, reps);
 
 		if (!test_flush)
@@ -1380,7 +1369,13 @@ main(int argc, char **argv)
 		  }
 		break;
 	      default:
-		B1;			/* BARRIER 1 */
+		B(test_cores);			/* BARRIER 1 */
+		sum += cas_0_eventually(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
 		break;
 	      }
 	    break;
@@ -1391,15 +1386,7 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B1;			/* BARRIER 1 */
-
-		if (!test_flush)
-		  {
-		    cache_line += test_stride;
-		  }
-		break;
-	      case 1:
-		B1;			/* BARRIER 1 */
+		B(test_cores);			/* BARRIER 1 */
 		sum += fai(cache_line, reps);
 
 		if (!test_flush)
@@ -1408,7 +1395,13 @@ main(int argc, char **argv)
 		  }
 		break;
 	      default:
-		B1;			/* BARRIER 1 */
+		B(test_cores);			/* BARRIER 1 */
+		sum += fai(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
 		break;
 	      }
 	    break;
@@ -1419,15 +1412,7 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B1;			/* BARRIER 1 */
-
-		if (!test_flush)
-		  {
-		    cache_line += test_stride;
-		  }
-		break;
-	      case 1:
-		B1;			/* BARRIER 1 */
+		B(test_cores);			/* BARRIER 1 */
 		sum += tas(cache_line, reps);
 
 		if (!test_flush)
@@ -1436,7 +1421,13 @@ main(int argc, char **argv)
 		  }
 		break;
 	      default:
-		B1;			/* BARRIER 1 */
+		B(test_cores);			/* BARRIER 1 */
+		sum += tas(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
 		break;
 	      }
 	    break;
@@ -1447,15 +1438,7 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B1;			/* BARRIER 1 */
-
-		if (!test_flush)
-		  {
-		    cache_line += test_stride;
-		  }
-		break;
-	      case 1:
-		B1;			/* BARRIER 1 */
+		B(test_cores);			/* BARRIER 1 */
 		sum += swap(cache_line, reps);
 
 		if (!test_flush)
@@ -1464,7 +1447,13 @@ main(int argc, char **argv)
 		  }
 		break;
 	      default:
-		B1;			/* BARRIER 1 */
+		B(test_cores);			/* BARRIER 1 */
+		sum += swap(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
 		break;
 	      }
 	    break;
