@@ -31,3 +31,51 @@ do
 	#echo Bye $testcase $cpu0 $cpu1 $cpu2
 	x=$(( $x + 1 ))
 done
+
+# CAS - 1
+# TAS - 2
+# FAI - 3
+# SWAP - 4
+
+declare -a atomicsNums=( 1 2 3 4 )
+for atomics in "${atomicsNums[@]}"
+do
+    if [ $atomics -eq 1 ]
+    then
+        # TODO - Check the test nums with the enum sequence
+        declare -a testNums=( 16 41 20 12 )
+        for tests in "${testNums[@]}"
+        do
+            # Test Cases
+            declare -a threadNums=( 1 2 4 8 14 )
+            for k in "${threadNums[@]}"
+            do
+                # Threads
+                if [ $k -eq 1 ] 
+                then
+                    threads="1"
+                elif [ $k -eq 2 ]
+                then
+                    threads="1"
+                elif [ $k -eq 4 ]
+                then
+                    threads="1"
+                elif [ $k -eq 8 ]
+                then
+                    threads="1"
+                elif [ $k -eq 16 ]
+                then
+                    threads="1"
+                fi
+
+                ./ccbench -t $testcase -c $j -x $threads -e 8 -s 0 -r 50000 -f -u | grep med | grep "$grepp" | tee -a "$testcase"_"$cpu0"_"$cpu1".txt
+
+            done
+
+        done
+    fi
+done
+
+
+
+
