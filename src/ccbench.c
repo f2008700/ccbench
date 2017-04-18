@@ -735,6 +735,7 @@ main(int argc, char **argv)
 	      }
 	    break;
 	  }
+          /* CAS_ON_INVALID */
 	case CAS: /* 12 */
 	  {
 	    switch (ID)
@@ -753,6 +754,7 @@ main(int argc, char **argv)
 	      }
 	    break;
 	  }
+          /* FAI_ON_INVALID */
 	case FAI: /* 13 */
 	  {
 	    switch (ID)
@@ -771,6 +773,7 @@ main(int argc, char **argv)
 	      }
 	    break;
 	  }
+          /* TAS_ON_INVALID */
 	case TAS:		/* 14 */
 	  {
 	    switch (ID)
@@ -858,59 +861,104 @@ main(int argc, char **argv)
 	  }
 	case FAI_ON_MODIFIED: /* 17 */
 	  {
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		store_0_eventually(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += fai(cache_line, reps);
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      }
+//	    break;
 	    switch (ID)
 	      {
 	      case 0:
 		store_0_eventually(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		break;
-	      case 1:
-		B1;		/* BARRIER 1 */
-		sum += fai(cache_line, reps);
+		B(test_cores);
 		break;
 	      default:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
+		sum += fai(cache_line, reps);
 		break;
 	      }
 	    break;
 	  }
 	case TAS_ON_MODIFIED: /* 18 */
 	  {
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		store_0_eventually(cache_line, reps);
+//		if (!test_ao_success)
+//		  {
+//		    cache_line->word[0] = 0xFFFFFFFF;
+//		    _mm_mfence();
+//		  }
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += tas(cache_line, reps);
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      }
+//	    break;
 	    switch (ID)
 	      {
 	      case 0:
 		store_0_eventually(cache_line, reps);
 		if (!test_ao_success)
 		  {
+                    assert(!test_ao_unsuccess);
 		    cache_line->word[0] = 0xFFFFFFFF;
 		    _mm_mfence();
 		  }
-		B1;		/* BARRIER 1 */
-		break;
-	      case 1:
-		B1;		/* BARRIER 1 */
-		sum += tas(cache_line, reps);
+		B(test_cores);
 		break;
 	      default:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
+		sum += tas(cache_line, reps);
 		break;
 	      }
 	    break;
 	  }
 	case SWAP_ON_MODIFIED: /* 19 */
 	  {
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		store_0_eventually(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += swap(cache_line, reps);
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      }
+//	    break;
 	    switch (ID)
 	      {
 	      case 0:
 		store_0_eventually(cache_line, reps);
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		break;
 	      case 1:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		sum += swap(cache_line, reps);
 		break;
 	      default:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		break;
 	      }
 	    break;
@@ -921,50 +969,74 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
+		B(test_cores);
+		B(test_cores);
 		break;
 	      case 1:
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
+		B(test_cores);
+		B(test_cores);
 		sum += cas_0_eventually(cache_line, reps);
 		break;
 	      case 2:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		sum += load_0_eventually(cache_line, reps);
-		B2;		/* BARRIER 2 */
+		B(test_cores);
 		break;
 	      default:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		sum += load_0_eventually_no_pf(cache_line);
-		B2;			/* BARRIER 2 */
+		B(test_cores);
 		break;
 	      }
 	    break;
 	  }
 	case FAI_ON_SHARED: /* 21 */
 	  {
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		sum += load_0_eventually(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		B2;		/* BARRIER 2 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		B2;		/* BARRIER 2 */
+//		sum += fai(cache_line, reps);
+//		break;
+//	      case 2:
+//		B1;		/* BARRIER 1 */
+//		sum += load_0_eventually(cache_line, reps);
+//		B2;		/* BARRIER 2 */
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		sum += load_0_eventually_no_pf(cache_line);
+//		B2;			/* BARRIER 2 */
+//		break;
+//	      }
+//	    break;
 	    switch (ID)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
+		B(test_cores);
+		B(test_cores);
 		break;
 	      case 1:
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
+		B(test_cores);
+		B(test_cores);
 		sum += fai(cache_line, reps);
 		break;
 	      case 2:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		sum += load_0_eventually(cache_line, reps);
-		B2;		/* BARRIER 2 */
+		B(test_cores);
 		break;
 	      default:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		sum += load_0_eventually_no_pf(cache_line);
-		B2;			/* BARRIER 2 */
+		B(test_cores);
 		break;
 	      }
 	    break;
@@ -976,30 +1048,32 @@ main(int argc, char **argv)
 	      case 0:
 		if (test_ao_success)
 		  {
+                    assert(!test_ao_unsuccess);
 		    cache_line->word[0] = 0;
 		  }
 		else
 		  {
+                    assert(!test_ao_success);
 		    cache_line->word[0] = 0xFFFFFFFF;
 		  }
 		sum += load_0_eventually(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
+		B(test_cores);
+		B(test_cores);
 		break;
 	      case 1:
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
+		B(test_cores);
+		B(test_cores);
 		sum += tas(cache_line, reps);
 		break;
 	      case 2:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		sum += load_0_eventually(cache_line, reps);
-		B2;		/* BARRIER 2 */
+		B(test_cores);
 		break;
 	      default:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		sum += load_0_eventually_no_pf(cache_line);
-		B2;			/* BARRIER 2 */
+		B(test_cores);
 		break;
 	      }
 	    break;
@@ -1008,25 +1082,45 @@ main(int argc, char **argv)
 	  {
 	    switch (ID)
 	      {
+//	      case 0:
+//		sum += load_0_eventually(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		B2;		/* BARRIER 2 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		B2;		/* BARRIER 2 */
+//		sum += swap(cache_line, reps);
+//		break;
+//	      case 2:
+//		B1;		/* BARRIER 1 */
+//		sum += load_0_eventually(cache_line, reps);
+//		B2;		/* BARRIER 2 */
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		sum += load_0_eventually_no_pf(cache_line);
+//		B2;			/* BARRIER 2 */
+//		break;
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
+		B(test_cores);
+		B(test_cores);
 		break;
 	      case 1:
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
+		B(test_cores);
+		B(test_cores);
 		sum += swap(cache_line, reps);
 		break;
 	      case 2:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		sum += load_0_eventually(cache_line, reps);
-		B2;		/* BARRIER 2 */
+		B(test_cores);
 		break;
 	      default:
-		B1;		/* BARRIER 1 */
+		B(test_cores);
 		sum += load_0_eventually_no_pf(cache_line);
-		B2;			/* BARRIER 2 */
+		B(test_cores);
 		break;
 	      }
 	    break;
