@@ -159,9 +159,9 @@ extern volatile ticks pfd_correction;
     uint32_t _i;							\
     uint32_t p = num_print;						\
     if (p > num_vals) { p = num_vals; }					\
+    /*printf("results %d vals %d prints\n", num_vals, num_print);*/     \
     for (_i = 0; _i < p; _i++)						\
       {									\
-	printf("[%3d: %4ld] ", _i, (long int) pfd_store[store][_i]);	\
       }									\
     abs_deviation_t ad;							\
     get_abs_deviation(pfd_store[store], num_vals, &ad);			\

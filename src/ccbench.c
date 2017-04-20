@@ -28,6 +28,7 @@
  */
 
 #include "ccbench.h"
+#include <sys/mman.h>
 
 uint8_t ID;
 unsigned long* seeds;
@@ -257,8 +258,6 @@ main(int argc, char **argv)
   for (char *p = strtok(test_list_cores ,","); p != NULL; p = strtok(NULL, ",")) {
         arr[count] = atoi( p );
         count++;
-        printf("%s\n", p );
-        printf("List is of length %d and %d\n", count,arr[count-1]);
   }
   //int *arr = (int *) malloc( sizeof(int) * count ); 
   //int ii =0;
@@ -350,6 +349,9 @@ main(int argc, char **argv)
 
   barriers_init(test_cores);
   seeds = seed_rand();
+  int *addr = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE,
+            MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+  *addr = 0;
 
   volatile cache_line_t* cache_line = cache_line_open();
 
@@ -1576,68 +1578,76 @@ main(int argc, char **argv)
 
   uint32_t id;
   int j;
-/*  for (id = 0; id < test_cores; id++)*/
-  for (id = 0; id < 1; id++)
+  for (id = 0; id < test_cores; id++)
     {
+        if (ID == id) {
+            while(*addr != id);
+            for (j = 0; j < test_reps; j++) {
+                printf("[%3d: %3d: %4ld]\n", ID, j, (long int) pfd_store[0][j]);
+            }
+            fflush(stdout);
+            *addr = id + 1;
+        }
+//  for (id = 0; id < 1; id++)
 /*      if (ID == id && ID < 8)
 	{*/
-	  switch (test_test)
-	    {
-	    case STORE_ON_OWNED_MINE:
-	    case STORE_ON_OWNED:
-	      if (ID < 2)
-		{
-		  PRINT(" *** Core %2d ************************************************************************************", ID);
-		  PFDPN(0, test_reps, test_print);
-		  if (ID == 1)
-		    {
-		      PFDPN(1, test_reps, test_print);
-		    }
-		}
-	      break;
-	    case CAS_CONCURRENT:
-	      if (ID < 2)
-		{
-		  PRINT(" *** Core %2d ************************************************************************************", ID);
-		  PFDPN(0, test_reps, test_print);
-		}
-	      break;
-	    case LOAD_FROM_L1:
-	      if (ID < 1)
-		{
-		  PRINT(" *** Core %2d ************************************************************************************", ID);
-		  PFDPN(0, test_reps, test_print);
-		}
-	      break;
-	    case LOAD_FROM_MEM_SIZE:
-	      if (ID < 3)
-		{
-		  PRINT(" *** Core %2d ************************************************************************************", ID);
-		  PFDPN(0, test_reps, test_print);
-		}
-	      break;
-	    case TAS_SPINLOCK:
-	      if (ID < 8)
-		{
-		  PRINT(" *** Core %2d ************************************************************************************", ID);
-		  //for (i=0;i<2;i++) {
-		      for(j=0;j<test_reps;j++) {
-		         diff_time[ID][j] = (long int)(end_time[ID][j] - start_time[ID][j]);
-			      // printf("Time taken by core %d is %lu\n", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
-		          //printf("Time taken by core %d is %lu\n ", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
-		      }
-                  abs_deviation_t ad;						
-	          printf("\nThe value of test_reps is %d", test_reps);	  
-                  get_abs_deviation(diff_time[ID], test_reps, &ad);
-                  print_abs_deviation(&ad);						
-		  //}
-		 // PFDPN(0, test_reps, test_print);
-		}
-	      break;
-	    default:
-	      PRINT(" *** Core %2d ************************************************************************************", ID);
-	      PFDPN(0, test_reps, test_print);
-	    }
+//	  switch (test_test)
+//	    {
+//	    case STORE_ON_OWNED_MINE:
+//	    case STORE_ON_OWNED:
+//	      if (ID < 2)
+//		{
+//		  PRINT(" *** Core %2d ************************************************************************************", ID);
+//		  PFDPN(0, test_reps, test_print);
+//		  if (ID == 1)
+//		    {
+//		      PFDPN(1, test_reps, test_print);
+//		    }
+//		}
+//	      break;
+//	    case CAS_CONCURRENT:
+//	      if (ID < 2)
+//		{
+//		  PRINT(" *** Core %2d ************************************************************************************", ID);
+//		  PFDPN(0, test_reps, test_print);
+//		}
+//	      break;
+//	    case LOAD_FROM_L1:
+//	      if (ID < 1)
+//		{
+//		  PRINT(" *** Core %2d ************************************************************************************", ID);
+//		  PFDPN(0, test_reps, test_print);
+//		}
+//	      break;
+//	    case LOAD_FROM_MEM_SIZE:
+//	      if (ID < 3)
+//		{
+//		  PRINT(" *** Core %2d ************************************************************************************", ID);
+//		  PFDPN(0, test_reps, test_print);
+//		}
+//	      break;
+//	    case TAS_SPINLOCK:
+//	      if (ID < 8)
+//		{
+//		  PRINT(" *** Core %2d ************************************************************************************", ID);
+//		  //for (i=0;i<2;i++) {
+//		      for(j=0;j<test_reps;j++) {
+//		         diff_time[ID][j] = (long int)(end_time[ID][j] - start_time[ID][j]);
+//			      // printf("Time taken by core %d is %lu\n", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
+//		          //printf("Time taken by core %d is %lu\n ", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
+//		      }
+//                  abs_deviation_t ad;						
+//	          printf("\nThe value of test_reps is %d", test_reps);	  
+//                  get_abs_deviation(diff_time[ID], test_reps, &ad);
+//                  print_abs_deviation(&ad);						
+//		  //}
+//		 // PFDPN(0, test_reps, test_print);
+//		}
+//	      break;
+//	    default:
+//	      PRINT(" *** Core %2d ************************************************************************************", ID);
+//	      PFDPN(0, test_reps, test_print);
+//	    }
 /*	}*/
       B0;
     }

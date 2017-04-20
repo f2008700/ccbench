@@ -137,7 +137,7 @@ print_abs_deviation(const abs_deviation_t* abs_dev)
   PRINT("    avg : %-10.1f abs dev : %-10.1f std dev : %-10.1f num     : %llu", 
 	abs_dev->avg, abs_dev->abs_dev, abs_dev->std_dev, (llu) abs_dev->num_vals);
   PRINT("    min : %-10.1f (element: %6llu)    max     : %-10.1f (element: %6llu)       med     : %6llu", abs_dev->min_val, 
-	(llu) abs_dev->min_val_idx, abs_dev->max_val, (llu) abs_dev->max_val_idx, abs_dev->med_val_idx);
+	(llu) abs_dev->min_val_idx, abs_dev->max_val, (llu) abs_dev->max_val_idx, (llu) abs_dev->med_val_idx);
   double v10p = 100 * 
     (1 - (abs_dev->num_vals - abs_dev->num_dev_10p) / (double) abs_dev->num_vals);
   double std_10pp = 100 * (1 - (abs_dev->avg_10p - abs_dev->std_dev_10p) / abs_dev->avg_10p);
