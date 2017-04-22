@@ -38,7 +38,7 @@
 #  include <sys/procset.h>
 #endif /* __sparc */
 
-#define NUM_BARRIERS 16
+#define NUM_BARRIERS 60
 #define BARRIER_MEM_FILE "/barrier_mem"
 
 #ifndef ALIGNED
