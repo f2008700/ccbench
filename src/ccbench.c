@@ -2071,7 +2071,7 @@ cas(volatile cache_line_t* cl, volatile uint64_t reps)
   do {
   r = CAS_U32(cl->word, o, no);
   } while (r != o);
-  printf("%d out of CAS\n", getpid());
+  //printf("%d out of CAS\n", getpid());
   PFDO(0, reps);
 
   return (r == o);
@@ -2086,7 +2086,7 @@ cas_no_pf(volatile cache_line_t* cl, volatile uint64_t reps)
   do {
   r = CAS_U32(cl->word, o, no);
   } while (r != o);
-  printf("%d out of second CAS\n", getpid());
+  //printf("%d out of second CAS\n", getpid());
 
   return (r == o);
 }
