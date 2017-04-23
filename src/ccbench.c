@@ -1617,15 +1617,11 @@ main(int argc, char **argv)
 	    switch (ID)
 	      {
 	      case 0:
+                  //store_0_eventually(cache_line, reps);
                   if (test_ao_success)
                   {
                       cache_line->word[0] = reps & 0x01;
                   }
-                  _mm_mfence();
-                  _mm_clflush((void*) cache_line);
-                  _mm_mfence();
-
-                  store_0_eventually(cache_line, reps);
                   B14;
                   B14;
                   cas(cache_line, reps);
