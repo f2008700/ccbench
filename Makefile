@@ -24,6 +24,12 @@ CC = gcc
 PLATFORM_NUMA = 1
 endif
 
+ifeq ($(UNAME), brie)
+#ifeq ($(UNAME), node-0.node.superpages-pg0.utah.cloudlab.us)
+PLATFORM = OPTERON
+CC = gcc
+endif
+
 ifeq ($(UNAME), maglite)
 PLATFORM = NIAGARA
 CC = /opt/csw/bin/gcc 

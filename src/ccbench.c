@@ -1612,6 +1612,105 @@ main(int argc, char **argv)
 	      }
 	    break;
 	  }
+	case CAS_ON_OWNED: /* 46 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+                  if (test_ao_success)
+                  {
+                      cache_line->word[0] = reps & 0x01;
+                  }
+                  _mm_mfence();
+                  _mm_clflush((void*) cache_line);
+                  _mm_mfence();
+
+                  store_0_eventually(cache_line, reps);
+                  B14;
+                  B14;
+                  cas(cache_line, reps);
+                  cas_no_pf(cache_line, reps + 1);
+                  B14;
+                  break;
+              case 1:
+                  B14;
+                  sum += load_0_eventually(cache_line, reps);
+                  B14;
+                  cas(cache_line, reps);
+                  cas_no_pf(cache_line, reps + 1);
+                  B14;
+                  break;
+              default:
+                  B14;
+                  B14;
+                  cas(cache_line, reps);
+                  cas_no_pf(cache_line, reps + 1);
+                  B14;
+		break;
+	      }
+	    break;
+	  }
+	case FAI_ON_OWNED: /* 47 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		store_0_eventually(cache_line, reps);
+		B14;
+		B14;
+		sum += fai(cache_line, reps);
+		break;
+	      case 1:
+		B14;
+		sum += load_0_eventually(cache_line, reps);
+		B14;
+		sum += fai(cache_line, reps);
+		break;
+	      default:
+		B14;
+		B14;
+		sum += fai(cache_line, reps);
+		break;
+	      }
+	    break;
+	  }
+	case TAS_ON_OWNED: /* 48 */
+	  {
+	    switch (ID)
+	      {
+	      case 0:
+		if (test_ao_success)
+		  {
+                    assert(!test_ao_unsuccess);
+		    cache_line->word[0] = 0;
+		  }
+		else
+		  {
+                    assert(!test_ao_success);
+		    cache_line->word[0] = 0xFFFFFFFF;
+		  }
+		store_0_eventually(cache_line, reps);
+		B14;
+		B14;
+		sum += tas(cache_line, reps);
+		cache_line->word[0] = 0;
+		break;
+	      case 1:
+		B14;
+		sum += load_0_eventually(cache_line, reps);
+		B14;
+		sum += tas(cache_line, reps);
+		cache_line->word[0] = 0;
+		break;
+	      default:
+		B14;
+		B14;
+		sum += tas(cache_line, reps);
+		cache_line->word[0] = 0;
+		break;
+	      }
+	    break;
+	  }
 	default:
 	  PFDI(0);
 	  asm volatile ("");

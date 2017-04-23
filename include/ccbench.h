@@ -128,6 +128,9 @@ typedef enum
     TAS_ON_EXCLUSIVE,
     SWAP_ON_EXCLUSIVE,
     TAS_SPINLOCK,
+    CAS_ON_OWNED,
+    FAI_ON_OWNED,
+    TAS_ON_OWNED
   } moesi_type_t;
 
 const char* moesi_type_des[] =
@@ -255,13 +258,13 @@ set_cpu(int cpu)
   }
 #endif
 
-#ifdef OPTERON
+/*#ifdef OPTERON
   uint32_t numa_node = cpu/6;
   numa_set_preferred(numa_node);  
 //#elif defined(XEON)
 #elif defined(XEON2)
   uint32_t numa_node = 2;
-/*  if (cpu == 0)
+  if (cpu == 0)
     {
       numa_node = 4;
     }
@@ -272,7 +275,7 @@ set_cpu(int cpu)
   else
     {
       numa_node = cpu / 10;
-    }*/
+    }
   if ((cpu < 14) || (cpu > 27 && cpu < 42))
     {
       numa_node = 0;
@@ -285,7 +288,7 @@ set_cpu(int cpu)
   numa_set_preferred(numa_node);  
 #elif defined(PLATFORM_NUMA)
   printf("* You need to define how cores correspond to mem nodes in ccbench.h\n");
-#endif 
+#endif */
   
 }
 
