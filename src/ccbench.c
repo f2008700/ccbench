@@ -28,6 +28,7 @@
  */
 
 #include "ccbench.h"
+#include <sys/mman.h>
 
 uint8_t ID;
 unsigned long* seeds;
@@ -257,8 +258,6 @@ main(int argc, char **argv)
   for (char *p = strtok(test_list_cores ,","); p != NULL; p = strtok(NULL, ",")) {
         arr[count] = atoi( p );
         count++;
-        printf("%s\n", p );
-        printf("List is of length %d and %d\n", count,arr[count-1]);
   }
   //int *arr = (int *) malloc( sizeof(int) * count ); 
   //int ii =0;
@@ -350,6 +349,9 @@ main(int argc, char **argv)
 
   barriers_init(test_cores);
   seeds = seed_rand();
+  int *addr = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE,
+            MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+  *addr = 0;
 
   volatile cache_line_t* cache_line = cache_line_open();
 
@@ -738,82 +740,104 @@ main(int argc, char **argv)
           /* CAS_ON_INVALID */
 	case CAS: /* 12 */
 	  {
-	    switch (ID)
-	      {
-	      case 0:
-		sum += cas_0_eventually(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		break;
-	      case 1:
-		B1;		/* BARRIER 1 */
-		sum += cas_0_eventually(cache_line, reps);
-		break;
-	      default:
-		B1;		/* BARRIER 1 */
-		break;
-	      }
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		sum += cas_0_eventually(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += cas_0_eventually(cache_line, reps);
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      }
+            if (test_ao_success)
+            {
+                cache_line->word[0] = reps & 0x01;
+            }
+            _mm_mfence();
+            _mm_clflush((void*) cache_line);
+            _mm_mfence();
+
+            B14;
+            cas(cache_line, reps);
+            cas_no_pf(cache_line, reps + 1);
+            B14;
 	    break;
 	  }
           /* FAI_ON_INVALID */
 	case FAI: /* 13 */
 	  {
-	    switch (ID)
-	      {
-	      case 0:
-		sum += fai(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		break;
-	      case 1:
-		B1;		/* BARRIER 1 */
-		sum += fai(cache_line, reps);
-		break;
-	      default:
-		B1;		/* BARRIER 1 */
-		break;
-	      }
-	    break;
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		sum += fai(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += fai(cache_line, reps);
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      }
+              B14;
+              sum += fai(cache_line, reps);
+              break;
+
 	  }
           /* TAS_ON_INVALID */
 	case TAS:		/* 14 */
 	  {
-	    switch (ID)
-	      {
-	      case 0:
-		sum += tas(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
-		break;
-	      case 1:
-		B1;		/* BARRIER 1 */
-		sum += tas(cache_line, reps);
-		_mm_mfence();
-		cache_line->word[0] = 0;
-		B2;		/* BARRIER 2 */
-		break;
-	      default:
-		B1;		/* BARRIER 1 */
-		B2;		/* BARRIER 2 */
-		break;
-	      }
-	    break;
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		sum += tas(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		B2;		/* BARRIER 2 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += tas(cache_line, reps);
+//		_mm_mfence();
+//		cache_line->word[0] = 0;
+//		B2;		/* BARRIER 2 */
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		B2;		/* BARRIER 2 */
+//		break;
+//	      }
+              B14;
+              sum += tas(cache_line, reps);
+              cache_line->word[0] = 0;
+              B14;
+              break;
 	  }
 	case SWAP: /* 15 */
 	  {
-	    switch (ID)
-	      {
-	      case 0:
-		sum += swap(cache_line, reps);
-		B1;		/* BARRIER 1 */
-		break;
-	      case 1:
-		B1;		/* BARRIER 1 */
-		sum += swap(cache_line, reps);
-		break;
-	      default:
-		B1;		/* BARRIER 1 */
-		break;
-	      }
-	    break;
+//	    switch (ID)
+//	      {
+//	      case 0:
+//		sum += swap(cache_line, reps);
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      case 1:
+//		B1;		/* BARRIER 1 */
+//		sum += swap(cache_line, reps);
+//		break;
+//	      default:
+//		B1;		/* BARRIER 1 */
+//		break;
+//	      }
+            B(test_cores);
+            sum += swap(cache_line, reps);
+            break;
+
 	  }
 	case CAS_ON_MODIFIED: /* 16 */
 	  {
@@ -850,11 +874,16 @@ main(int argc, char **argv)
                     assert(!test_ao_success);
 		    cache_line->word[0] = !(reps & 0x01);
 		  }
-		B(test_cores);
+		B14;
+		cas(cache_line, reps);
+                cas_no_pf(cache_line, reps + 1);
+		B14;
 		break;
 	      default:
-		B(test_cores);
-		sum += cas(cache_line, reps);
+		B14;
+		cas(cache_line, reps);
+                cas_no_pf(cache_line, reps + 1);
+		B14;
 		break;
 	      }
 	    break;
@@ -879,13 +908,14 @@ main(int argc, char **argv)
 	    switch (ID)
 	      {
 	      case 0:
-		store_0_eventually(cache_line, reps);
-		B(test_cores);
-		break;
-	      default:
-		B(test_cores);
-		sum += fai(cache_line, reps);
-		break;
+                  store_0_eventually(cache_line, reps);
+                  B14;
+                  sum += fai(cache_line, reps);
+                  break;
+              default:
+                  B14;
+                  sum += fai(cache_line, reps);
+                  break;
 	      }
 	    break;
 	  }
@@ -915,17 +945,20 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		store_0_eventually(cache_line, reps);
-		if (!test_ao_success)
+		if (test_ao_success)
 		  {
                     assert(!test_ao_unsuccess);
-		    cache_line->word[0] = 0xFFFFFFFF;
+		    cache_line->word[0] = 0;
 		    _mm_mfence();
 		  }
-		B(test_cores);
+		B14;
+		sum += tas(cache_line, reps);
+		cache_line->word[0] = 0;
 		break;
 	      default:
-		B(test_cores);
+		B14;
 		sum += tas(cache_line, reps);
+		cache_line->word[0] = 0;
 		break;
 	      }
 	    break;
@@ -952,13 +985,11 @@ main(int argc, char **argv)
 	      case 0:
 		store_0_eventually(cache_line, reps);
 		B(test_cores);
-		break;
-	      case 1:
-		B(test_cores);
 		sum += swap(cache_line, reps);
 		break;
 	      default:
 		B(test_cores);
+		sum += swap(cache_line, reps);
 		break;
 	      }
 	    break;
@@ -968,24 +999,35 @@ main(int argc, char **argv)
 	    switch (ID)
 	      {
 	      case 0:
-		sum += load_0_eventually(cache_line, reps);
-		B(test_cores);
-		B(test_cores);
-		break;
-	      case 1:
-		B(test_cores);
-		B(test_cores);
-		sum += cas_0_eventually(cache_line, reps);
-		break;
-	      case 2:
-		B(test_cores);
-		sum += load_0_eventually(cache_line, reps);
-		B(test_cores);
-		break;
-	      default:
-		B(test_cores);
-		sum += load_0_eventually_no_pf(cache_line);
-		B(test_cores);
+                  if (test_ao_success)
+                  {
+                      cache_line->word[0] = reps & 0x01;
+                  }
+                  _mm_mfence();
+                  _mm_clflush((void*) cache_line);
+                  _mm_mfence();
+
+                  sum += load_0_eventually(cache_line, reps);
+                  B14;
+                  B14;
+                  cas(cache_line, reps);
+                  cas_no_pf(cache_line, reps + 1);
+                  B14;
+                  break;
+              case 1:
+                  B14;
+                  sum += load_0_eventually(cache_line, reps);
+                  B14;
+                  cas(cache_line, reps);
+                  cas_no_pf(cache_line, reps + 1);
+                  B14;
+                  break;
+              default:
+                  B14;
+                  B14;
+                  cas(cache_line, reps);
+                  cas_no_pf(cache_line, reps + 1);
+                  B14;
 		break;
 	      }
 	    break;
@@ -1020,23 +1062,20 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B(test_cores);
-		B(test_cores);
-		break;
-	      case 1:
-		B(test_cores);
-		B(test_cores);
+		B14;
+		B14;
 		sum += fai(cache_line, reps);
 		break;
-	      case 2:
-		B(test_cores);
+	      case 1:
+		B14;
 		sum += load_0_eventually(cache_line, reps);
-		B(test_cores);
+		B14;
+		sum += fai(cache_line, reps);
 		break;
 	      default:
-		B(test_cores);
-		sum += load_0_eventually_no_pf(cache_line);
-		B(test_cores);
+		B14;
+		B14;
+		sum += fai(cache_line, reps);
 		break;
 	      }
 	    break;
@@ -1057,23 +1096,23 @@ main(int argc, char **argv)
 		    cache_line->word[0] = 0xFFFFFFFF;
 		  }
 		sum += load_0_eventually(cache_line, reps);
-		B(test_cores);
-		B(test_cores);
+		B14;
+		B14;
+		sum += tas(cache_line, reps);
+		cache_line->word[0] = 0;
 		break;
 	      case 1:
-		B(test_cores);
-		B(test_cores);
-		sum += tas(cache_line, reps);
-		break;
-	      case 2:
-		B(test_cores);
+		B14;
 		sum += load_0_eventually(cache_line, reps);
-		B(test_cores);
+		B14;
+		sum += tas(cache_line, reps);
+		cache_line->word[0] = 0;
 		break;
 	      default:
-		B(test_cores);
-		sum += load_0_eventually_no_pf(cache_line);
-		B(test_cores);
+		B14;
+		B14;
+		sum += tas(cache_line, reps);
+		cache_line->word[0] = 0;
 		break;
 	      }
 	    break;
@@ -1106,21 +1145,18 @@ main(int argc, char **argv)
 		sum += load_0_eventually(cache_line, reps);
 		B(test_cores);
 		B(test_cores);
+		sum += swap(cache_line, reps);
 		break;
 	      case 1:
 		B(test_cores);
+		sum += load_0_eventually(cache_line, reps);
 		B(test_cores);
 		sum += swap(cache_line, reps);
 		break;
-	      case 2:
-		B(test_cores);
-		sum += load_0_eventually(cache_line, reps);
-		B(test_cores);
-		break;
 	      default:
 		B(test_cores);
-		sum += load_0_eventually_no_pf(cache_line);
 		B(test_cores);
+		sum += swap(cache_line, reps);
 		break;
 	      }
 	    break;
@@ -1362,17 +1398,19 @@ main(int argc, char **argv)
 	    switch (ID)
 	      {
 	      case 0:
-		sum += load_0_eventually(cache_line, reps);
-		B1;			/* BARRIER 1 */
-
-		if (!test_flush)
+		if (test_ao_success)
 		  {
-		    cache_line += test_stride;
+		    cache_line->word[0] = reps & 0x01;
 		  }
-		break;
-	      case 1:
-		B1;			/* BARRIER 1 */
-		sum += cas_0_eventually(cache_line, reps);
+                _mm_mfence();
+                _mm_clflush((void*) cache_line);
+                _mm_mfence();
+
+		sum += load_0_eventually(cache_line, reps);
+		B14;
+		cas(cache_line, reps);
+                cas_no_pf(cache_line, reps + 1);
+		B14;
 
 		if (!test_flush)
 		  {
@@ -1380,7 +1418,15 @@ main(int argc, char **argv)
 		  }
 		break;
 	      default:
-		B1;			/* BARRIER 1 */
+		B14;
+		cas(cache_line, reps);
+                cas_no_pf(cache_line, reps + 1);
+		B14;
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
 		break;
 	      }
 	    break;
@@ -1391,15 +1437,7 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B1;			/* BARRIER 1 */
-
-		if (!test_flush)
-		  {
-		    cache_line += test_stride;
-		  }
-		break;
-	      case 1:
-		B1;			/* BARRIER 1 */
+		B14;
 		sum += fai(cache_line, reps);
 
 		if (!test_flush)
@@ -1408,7 +1446,13 @@ main(int argc, char **argv)
 		  }
 		break;
 	      default:
-		B1;			/* BARRIER 1 */
+		B14;
+		sum += fai(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
 		break;
 	      }
 	    break;
@@ -1419,16 +1463,9 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B1;			/* BARRIER 1 */
-
-		if (!test_flush)
-		  {
-		    cache_line += test_stride;
-		  }
-		break;
-	      case 1:
-		B1;			/* BARRIER 1 */
+		B14;
 		sum += tas(cache_line, reps);
+		cache_line->word[0] = 0;
 
 		if (!test_flush)
 		  {
@@ -1436,7 +1473,14 @@ main(int argc, char **argv)
 		  }
 		break;
 	      default:
-		B1;			/* BARRIER 1 */
+		B14;
+		sum += tas(cache_line, reps);
+		cache_line->word[0] = 0;
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
 		break;
 	      }
 	    break;
@@ -1447,15 +1491,7 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-		B1;			/* BARRIER 1 */
-
-		if (!test_flush)
-		  {
-		    cache_line += test_stride;
-		  }
-		break;
-	      case 1:
-		B1;			/* BARRIER 1 */
+		B(test_cores);			/* BARRIER 1 */
 		sum += swap(cache_line, reps);
 
 		if (!test_flush)
@@ -1464,7 +1500,13 @@ main(int argc, char **argv)
 		  }
 		break;
 	      default:
-		B1;			/* BARRIER 1 */
+		B(test_cores);			/* BARRIER 1 */
+		sum += swap(cache_line, reps);
+
+		if (!test_flush)
+		  {
+		    cache_line += test_stride;
+		  }
 		break;
 	      }
 	    break;
@@ -1587,68 +1629,76 @@ main(int argc, char **argv)
 
   uint32_t id;
   int j;
-/*  for (id = 0; id < test_cores; id++)*/
-  for (id = 0; id < 1; id++)
+  for (id = 0; id < test_cores; id++)
     {
+        if (ID == id) {
+            while(*addr != id);
+            for (j = 0; j < test_reps; j++) {
+                printf("[%3d: %3d: %4ld]\n", ID, j, (long int) pfd_store[0][j]);
+            }
+            fflush(stdout);
+            *addr = id + 1;
+        }
+//  for (id = 0; id < 1; id++)
 /*      if (ID == id && ID < 8)
 	{*/
-	  switch (test_test)
-	    {
-	    case STORE_ON_OWNED_MINE:
-	    case STORE_ON_OWNED:
-	      if (ID < 2)
-		{
-		  PRINT(" *** Core %2d ************************************************************************************", ID);
-		  PFDPN(0, test_reps, test_print);
-		  if (ID == 1)
-		    {
-		      PFDPN(1, test_reps, test_print);
-		    }
-		}
-	      break;
-	    case CAS_CONCURRENT:
-	      if (ID < 2)
-		{
-		  PRINT(" *** Core %2d ************************************************************************************", ID);
-		  PFDPN(0, test_reps, test_print);
-		}
-	      break;
-	    case LOAD_FROM_L1:
-	      if (ID < 1)
-		{
-		  PRINT(" *** Core %2d ************************************************************************************", ID);
-		  PFDPN(0, test_reps, test_print);
-		}
-	      break;
-	    case LOAD_FROM_MEM_SIZE:
-	      if (ID < 3)
-		{
-		  PRINT(" *** Core %2d ************************************************************************************", ID);
-		  PFDPN(0, test_reps, test_print);
-		}
-	      break;
-	    case TAS_SPINLOCK:
-	      if (ID < 8)
-		{
-		  PRINT(" *** Core %2d ************************************************************************************", ID);
-		  //for (i=0;i<2;i++) {
-		      for(j=0;j<test_reps;j++) {
-		         diff_time[ID][j] = (long int)(end_time[ID][j] - start_time[ID][j]);
-			      // printf("Time taken by core %d is %lu\n", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
-		          //printf("Time taken by core %d is %lu\n ", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
-		      }
-                  abs_deviation_t ad;						
-	          printf("\nThe value of test_reps is %d", test_reps);	  
-                  get_abs_deviation(diff_time[ID], test_reps, &ad);
-                  print_abs_deviation(&ad);						
-		  //}
-		 // PFDPN(0, test_reps, test_print);
-		}
-	      break;
-	    default:
-	      PRINT(" *** Core %2d ************************************************************************************", ID);
-	      PFDPN(0, test_reps, test_print);
-	    }
+//	  switch (test_test)
+//	    {
+//	    case STORE_ON_OWNED_MINE:
+//	    case STORE_ON_OWNED:
+//	      if (ID < 2)
+//		{
+//		  PRINT(" *** Core %2d ************************************************************************************", ID);
+//		  PFDPN(0, test_reps, test_print);
+//		  if (ID == 1)
+//		    {
+//		      PFDPN(1, test_reps, test_print);
+//		    }
+//		}
+//	      break;
+//	    case CAS_CONCURRENT:
+//	      if (ID < 2)
+//		{
+//		  PRINT(" *** Core %2d ************************************************************************************", ID);
+//		  PFDPN(0, test_reps, test_print);
+//		}
+//	      break;
+//	    case LOAD_FROM_L1:
+//	      if (ID < 1)
+//		{
+//		  PRINT(" *** Core %2d ************************************************************************************", ID);
+//		  PFDPN(0, test_reps, test_print);
+//		}
+//	      break;
+//	    case LOAD_FROM_MEM_SIZE:
+//	      if (ID < 3)
+//		{
+//		  PRINT(" *** Core %2d ************************************************************************************", ID);
+//		  PFDPN(0, test_reps, test_print);
+//		}
+//	      break;
+//	    case TAS_SPINLOCK:
+//	      if (ID < 8)
+//		{
+//		  PRINT(" *** Core %2d ************************************************************************************", ID);
+//		  //for (i=0;i<2;i++) {
+//		      for(j=0;j<test_reps;j++) {
+//		         diff_time[ID][j] = (long int)(end_time[ID][j] - start_time[ID][j]);
+//			      // printf("Time taken by core %d is %lu\n", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
+//		          //printf("Time taken by core %d is %lu\n ", ID, (unsigned long)(end_time[ID][j] - start_time[ID][j]));
+//		      }
+//                  abs_deviation_t ad;						
+//	          printf("\nThe value of test_reps is %d", test_reps);	  
+//                  get_abs_deviation(diff_time[ID], test_reps, &ad);
+//                  print_abs_deviation(&ad);						
+//		  //}
+//		 // PFDPN(0, test_reps, test_print);
+//		}
+//	      break;
+//	    default:
+//	      PRINT(" *** Core %2d ************************************************************************************", ID);
+//	      PFDPN(0, test_reps, test_print);
+//	    }
 /*	}*/
       B0;
     }
@@ -2018,7 +2068,10 @@ cas(volatile cache_line_t* cl, volatile uint64_t reps)
   volatile uint32_t r;
 
   PFDI(0);
+  do {
   r = CAS_U32(cl->word, o, no);
+  } while (r != o);
+  //printf("%d out of CAS\n", getpid());
   PFDO(0, reps);
 
   return (r == o);
@@ -2030,7 +2083,10 @@ cas_no_pf(volatile cache_line_t* cl, volatile uint64_t reps)
   uint8_t o = reps & 0x1;
   uint8_t no = !o; 
   volatile uint32_t r;
+  do {
   r = CAS_U32(cl->word, o, no);
+  } while (r != o);
+  //printf("%d out of second CAS\n", getpid());
 
   return (r == o);
 }
@@ -2092,7 +2148,9 @@ tas(volatile cache_line_t* cl, volatile uint64_t reps)
 #endif
 
       PFDI(0);
+      do {
       r = TAS_U8(b);
+      } while (r != 255);
       PFDO(0, reps);
     }
   while (cln > 0);

@@ -136,10 +136,12 @@ void
 barrier_wait(const uint32_t barrier_num, const uint32_t id, const uint32_t total_cores) 
 {
   _mm_mfence();
+  /*
   if (barrier_num >= NUM_BARRIERS) 
     {
       return;
     }
+    */
 
   //  printf("enter: %d : %d\n", barrier_num, id);
 

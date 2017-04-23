@@ -1,1 +1,0 @@
-[02]     min : 0.0        (element: 162032)    max     : 264.0      (element: 697729)       med     :     10
