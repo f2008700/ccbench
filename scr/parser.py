@@ -1,3 +1,4 @@
+import sys
 from os import walk
 
 def median(lst):
@@ -12,37 +13,82 @@ def median(lst):
 def geoMed(lst):
     print len(lst)
 
-def printLstStats(lst, thread):
-    print "Thr: " , thread
+def printLstStats(lst, sequence ):
+    print "Seq: " , sequence
     print "Med: " , median(lst)
+    """
     print "Min: ", min(lst)
     print "Max: ", max(lst)
     print "Avg: ", sum(lst)/len(lst)
+    """
     print 
 
-mypath="results_/"
-
-f = []
+#mypath="/home/spai2/res/"
+'''
 for (dirpath, dirnames, filenames) in walk(mypath):
     f.extend(filenames)
     print f
+'''
 
-for fs in f:
-    fil=open(mypath + fs, 'r')
-    bw=[]
+def parse(f):
+    for fs in f:
+        #fil=open(mypath + fs, 'r')
+        fil=open( fs, 'r')
+        bw=[]
 
-    print fs
-    totThrd=fs.split('_')
-    print totThrd[0]
-    threads=totThrd[1].split('.')[0].split(',')
-    print threads
+        print "File ", fs
+        totThrd=fs.split('_')[0]
+        threads = int( totThrd.split('/')[-1] )
+        
+        iterations = 100 * 1000 
+        #threads = totThrd[1].split('.')[0].split(',')
+        #print threads
+        
+        #c = range ( int(totThrd[0]) )
+        #c = [None ] *  int(totThrd[0]) 
+        #x = [ c for i in range(100 * 1000)]
+        x = [ [ 0 ] * threads for _ in range( iterations ) ]
 
-    
-    lst = []
-    for thread in threads:
-        for line in fil:
-            if int(thread) < 10 and line.startswith('[  ' + str(thread) + ':'):
-                num = int(line.split(':')[2].split(']')[0])
-                lst.append( num )
-                #print num,
-        printLstStats(lst,thread)
+        flag = 0
+        for thread in range(threads):
+            for line in fil:
+                stri = '[' + str(thread) + ':'
+                if line.startswith(stri):
+                    latency = int(line.split(':')[2].split(']')[0])
+                    row = int(line.split(':')[1].split(']')[0])
+                    col = int(line.split(':')[3].split(']')[0]) - 1
+                    flag = 1         
+                    x[row][col] = latency
+                elif flag == 1:
+                    flag = 0
+                    break
+            fil.close()
+            fil = open ( fs, 'r' )
+        '''                
+        for i in range(11):
+            for j in range(threads):
+                print x[i][j], ' ',
+            print 
+        '''
+        for i in range(threads):
+            newx = [] 
+            for j in range(len(x)):
+                if ( x[j][i] == None ):
+                    print j,i
+                newx.append(x[j][i])
+                #print x[i][j], ' ',
+            printLstStats(newx, i)
+         
+
+def main():
+    i = 0
+    f = []
+    for i in range ( 1,len ( sys.argv ) ):
+        #print i,sys.argv[i]
+        f.append( sys.argv[i] ) 
+    parse(f)
+
+
+if __name__ == '__main__':
+    main()
+
