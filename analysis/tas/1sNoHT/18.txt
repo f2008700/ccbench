@@ -1,0 +1,20 @@
+Num Threads: 1
+Thread Placement: 0
+Medians: 81.0 
+
+Num Threads: 14
+Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+Medians: 324.0 361.0 420.0 494.0 626.0 872.0 1182.0 1616.0 2297.0 3214.0 4349.0 5714.0 7363.0 9455.0 
+
+Num Threads: 2
+Thread Placement: 0, 1
+Medians: 112.0 222.0 
+
+Num Threads: 4
+Thread Placement: 0, 1, 2, 3
+Medians: 308.0 332.0 484.0 733.0 
+
+Num Threads: 8
+Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7
+Medians: 308.0 338.0 418.0 528.0 836.0 1276.0 2559.0 4730.0 
+
