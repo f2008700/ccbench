@@ -20,8 +20,15 @@ plt.rc('legend', fontsize=SIZE)          # legend fontsize
 
 class rssvstime:
 
-    def __init__(self, data1):
-
+    def __init__(self, data1, fileName ):
+       
+        print fileName
+        graphDir = "../analysis/"
+        atomics = fileName.split('/')[-3]
+        placement = fileName.split('/')[-2]
+        testNum = fileName.split('/')[-1].split('.')[0]
+        #print atomics, placement,testNum
+        
         y1 = []
         y2 = []
         x1 = [] 
@@ -66,7 +73,8 @@ class rssvstime:
         # Plot line
         ax1.plot(x1, y1, color= colBlack,  marker='o' )
         ax1.plot(x1, y2, color= colBlack, marker='x', ms = 10,  mew = 2 )
-       
+        ax1.grid(True)
+
         # Fill Color
         ax1.fill_between( x1, 0, y2, facecolor = colRed )
         ax1.fill_between( x1, 0, y1, facecolor = colWhite )
@@ -77,10 +85,11 @@ class rssvstime:
         
         patch1 = mpatches.Patch( color = colRed, label='Base Pages')
         plt.legend([ patch1 ], ["Latency variation" ], loc='upper left')
-        plt.savefig("latency.png")
-        plt.show()
+        plt.savefig( graphDir + atomics + '/' + placement + '/' + testNum + '.png')
+        #plt.show()
 
 if __name__ == '__main__':
+    fileName = sys.argv[1]
     with open(sys.argv[1], 'rb') as f1:
         data1 = f1.read()
-        rssvstime(data1)
+        rssvstime( data1,fileName )
