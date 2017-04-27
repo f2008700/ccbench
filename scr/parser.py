@@ -1,5 +1,5 @@
 import sys
-from os import walk
+import os
 
 def median(lst):
     lst = sorted(lst)
@@ -10,20 +10,18 @@ def median(lst):
     else:
             return float(sum(lst[(len(lst)/2)-1:(len(lst)/2)+1]))/2.0
 
-def geoMed(lst):
-    print len(lst)
-
-def printLstStats(lst, sequence ):
+def printLstStats(lst, sequence, outf):
+    #outf.write('Turn: ' + str(sequence) + ' ')
+    outf.write(str(median(lst)) + ' ')
+    """
     print "Seq: " , sequence
     print "Med: " , median(lst)
-    """
     print "Min: ", min(lst)
     print "Max: ", max(lst)
     print "Avg: ", sum(lst)/len(lst)
     """
     print 
 
-#mypath="/home/spai2/res/"
 '''
 for (dirpath, dirnames, filenames) in walk(mypath):
     f.extend(filenames)
@@ -36,18 +34,32 @@ def parse(f):
         fil=open( fs, 'r')
         bw=[]
 
+        valid_path = fs.split('/')[4]
+        if valid_path != "results":
+            sys.exit("Need to provide absolute path: /home/spai2/ccbench/results/")
+        
+        atomic = fs.split('/')[5]
+        socketConfig = fs.split('/')[6]
+
         print "File ", fs
         totThrd=fs.split('_')[0]
         threads = int( totThrd.split('/')[-1] )
-        
+        test = totThrd.split('/')[-2]
+        placement = fs.split('_')[1]
+        placement = placement.split('.')[0]
+
+        outfile = os.path.join(analysisDir, atomic, socketConfig, test + '.txt')
+
+        outf = open(outfile, 'a+')
+        outf.write('Num Threads: '+ str(threads) + '\n')
+        places = ', '.join(placement.split(','))
+        outf.write('Thread Placement: '+ places + '\n')
+        outf.write('Medians: ')
+
         iterations = 100 * 1000 
-        #threads = totThrd[1].split('.')[0].split(',')
-        #print threads
         
-        #c = range ( int(totThrd[0]) )
-        #c = [None ] *  int(totThrd[0]) 
-        #x = [ c for i in range(100 * 1000)]
-        x = [ [ 0 ] * threads for _ in range( iterations ) ]
+        # Hols the result Matrix
+        x = [ [ None ] * threads for _ in range( iterations ) ]
 
         flag = 0
         for thread in range(threads):
@@ -64,12 +76,15 @@ def parse(f):
                     break
             fil.close()
             fil = open ( fs, 'r' )
-        '''                
-        for i in range(11):
+        """
+        for i in range(iterations):
             for j in range(threads):
-                print x[i][j], ' ',
+                #print x[i][j], ' ',
+                if x[i][j] != None:
+                    print 'i: ', i, 'j: ', j
             print 
-        '''
+        return
+        """
         for i in range(threads):
             newx = [] 
             for j in range(len(x)):
@@ -77,8 +92,12 @@ def parse(f):
                     print j,i
                 newx.append(x[j][i])
                 #print x[i][j], ' ',
-            printLstStats(newx, i)
+            printLstStats(newx, i, outf)
+        outf.write('\n\n')
+        outf.close()
          
+
+analysisDir = "/home/spai2/ccbench/analysis"
 
 def main():
     i = 0
