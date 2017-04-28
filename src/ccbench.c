@@ -32,6 +32,7 @@
 
 uint8_t ID;
 unsigned long* seeds;
+uint32_t pfdturn;
 
 #if defined(__tile__)
 cpu_set_t cpus;
@@ -826,12 +827,12 @@ main(int argc, char **argv)
 //		B2;		/* BARRIER 2 */
 //		break;
 //	      }
-              *turn = 0;
+              *turn = 1;
               B14;
               sum += tas(cache_line, reps);
-              FAI_U32(turn);
+              pfdturn = FAI_U32(turn);
               _mm_mfence();
-              PFDT(0, reps, *turn);
+              PFDT(0, reps, pfdturn);
               cache_line->word[0] = 0;
               B14;
               break;
@@ -980,20 +981,20 @@ main(int argc, char **argv)
 		    cache_line->word[0] = 0;
 		    _mm_mfence();
 		  }
-                *turn = 0;
+                *turn = 1;
 		B14;
                 sum += tas(cache_line, reps);
-                FAI_U32(turn);
+                pfdturn = FAI_U32(turn);
                 _mm_mfence();
-                PFDT(0, reps, *turn);
+                PFDT(0, reps, pfdturn);
                 cache_line->word[0] = 0;
 		break;
 	      default:
 		B14;
 		sum += tas(cache_line, reps);
-                FAI_U32(turn);
+                pfdturn = FAI_U32(turn);
                 _mm_mfence();
-                PFDT(0, reps, *turn);
+                PFDT(0, reps, pfdturn);
 		cache_line->word[0] = 0;
 		break;
 	      }
@@ -1151,13 +1152,13 @@ main(int argc, char **argv)
 		    cache_line->word[0] = 0xFFFFFFFF;
 		  }
 		sum += load_0_eventually(cache_line, reps);
-                *turn = 0;
+                *turn = 1;
 		B14;
 		B14;
 		sum += tas(cache_line, reps);
-                FAI_U32(turn);
+                pfdturn = FAI_U32(turn);
                 _mm_mfence();
-                PFDT(0, reps, *turn);
+                PFDT(0, reps, pfdturn);
 		cache_line->word[0] = 0;
 		break;
 	      case 1:
@@ -1165,18 +1166,18 @@ main(int argc, char **argv)
 		sum += load_0_eventually(cache_line, reps);
 		B14;
 		sum += tas(cache_line, reps);
-                FAI_U32(turn);
+                pfdturn = FAI_U32(turn);
                 _mm_mfence();
-                PFDT(0, reps, *turn);
+                PFDT(0, reps, pfdturn);
 		cache_line->word[0] = 0;
 		break;
 	      default:
 		B14;
 		B14;
 		sum += tas(cache_line, reps);
-                FAI_U32(turn);
+                pfdturn = FAI_U32(turn);
                 _mm_mfence();
-                PFDT(0, reps, *turn);
+                PFDT(0, reps, pfdturn);
 		cache_line->word[0] = 0;
 		break;
 	      }
@@ -1539,12 +1540,12 @@ main(int argc, char **argv)
 	      {
 	      case 0:
 		sum += load_0_eventually(cache_line, reps);
-                *turn = 0;
+                *turn = 1;
 		B14;
 		sum += tas(cache_line, reps);
-                FAI_U32(turn);
+                pfdturn = FAI_U32(turn);
                 _mm_mfence();
-                PFDT(0, reps, *turn);
+                PFDT(0, reps, pfdturn);
 		cache_line->word[0] = 0;
 
 		if (!test_flush)
@@ -1555,9 +1556,9 @@ main(int argc, char **argv)
 	      default:
 		B14;
 		sum += tas(cache_line, reps);
-                FAI_U32(turn);
+                pfdturn = FAI_U32(turn);
                 _mm_mfence();
-                PFDT(0, reps, *turn);
+                PFDT(0, reps, pfdturn);
 		cache_line->word[0] = 0;
 
 		if (!test_flush)

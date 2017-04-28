@@ -1,20 +1,25 @@
 Num Threads: 1
 Thread Placement: 0
-Medians: 51.0 
+Medians: 51 
+Iter Num: 0
 
 Num Threads: 14
 Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-Medians: 288.0 2503.0 5868.0 9015.0 12029.0 14808.0 17382.0 19772.0 21929.0 23894.0 25698.0 27268.0 28602.0 29636.0 
+Medians: 3933 310 706 9096 14442 11420 20469 15270 29724 25221 22362 22985 28792 27011 
+Iter Num: 63506
 
 Num Threads: 2
 Thread Placement: 0, 1
-Medians: 51.0 572.0 
+Medians: 51 574 
+Iter Num: 12
 
 Num Threads: 4
 Thread Placement: 0, 1, 2, 3
-Medians: 264.0 1525.0 2984.0 4143.0 
+Medians: 80 1557 2984 4173 
+Iter Num: 46277
 
 Num Threads: 8
 Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7
-Medians: 206.0 1689.0 3688.0 5551.0 7255.0 8816.0 10173.0 11191.0 
+Medians: 75 1527 3652 4982 7333 9123 10002 11389 
+Iter Num: 61920
 
