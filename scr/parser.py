@@ -10,19 +10,18 @@ def median(lst):
     else:
             return float(sum(lst[(len(lst)/2)-1:(len(lst)/2)+1]))/2.0
 
+'''
 def printLstStats(lst, sequence, outf):
     #outf.write('Turn: ' + str(sequence) + ' ')
-    outf.write(str(median(lst)) + ' ')
-    """
+    for i in lst:
+        outf.write(str(i) + ' ')
     print "Seq: " , sequence
     print "Med: " , median(lst)
     print "Min: ", min(lst)
     print "Max: ", max(lst)
     print "Avg: ", sum(lst)/len(lst)
-    """
     print 
 
-'''
 for (dirpath, dirnames, filenames) in walk(mypath):
     f.extend(filenames)
     print f
@@ -60,7 +59,7 @@ def parse(f):
         
         # Hols the result Matrix
         x = [ [ None ] * threads for _ in range( iterations ) ]
-
+        rawX = [ [ None ] * threads for _ in range( iterations ) ]
         flag = 0
         for thread in range(threads):
             for line in fil:
@@ -71,6 +70,7 @@ def parse(f):
                     col = int(line.split(':')[3].split(']')[0]) - 1
                     flag = 1         
                     x[row][col] = latency
+                    rawX[row][thread] = latency
                 elif flag == 1:
                     flag = 0
                     break
@@ -85,6 +85,7 @@ def parse(f):
             print 
         return
         """
+        medianLst = []
         for i in range(threads):
             newx = [] 
             for j in range(len(x)):
@@ -92,7 +93,31 @@ def parse(f):
                     print j,i
                 newx.append(x[j][i])
                 #print x[i][j], ' ',
-            printLstStats(newx, i, outf)
+            if i == 0:
+                '''
+                for xii in newx:
+                    print xii
+                '''
+            medianLst.append ( median( newx ) )
+            #printLstStats(newx, i, outf)
+
+        eucledianLst = []
+        for i in range( len( rawX )):
+            sumi = 0
+            for j in range( len( rawX[i] )):
+                sumi += ( rawX[i][j] - medianLst[j] ) ** 2
+                if i == 0 and j == 0:
+                    print medianLst[j], sumi, rawX[i][j]
+            eucledianLst.append( sumi )  
+
+        idx = eucledianLst.index( min( eucledianLst ) )
+        print "Index: ", idx 
+        repMedians = rawX[ idx ]
+        #printLstStats(rawX)
+        for i in repMedians:
+            outf.write(str(i) + ' ')
+        outf.write('\n' + 'Iter Num: '+ str(idx))
+
         outf.write('\n\n')
         outf.close()
          
