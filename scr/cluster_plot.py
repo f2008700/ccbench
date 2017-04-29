@@ -52,14 +52,18 @@ class rssvstime:
         # Y1 - min latency
         # X1 - thread IDs 
         for median in medianLst:
-            y1.append( min( median[1:] ) )
+            for elt in median[1:]:
+                y1.append(elt)
             #y2.append( math.log( max( median[1:] ), 2 ) ) 
-            y2.append( max( median[1:] ) ) 
-            x1.append( median[0] ) 
+            #y2.append( max( median[1:] ) ) 
+            for cnt in range(median[0]):
+                x1.append( median[0])
         
-        x1 = sorted ( x1 )
+        #x1 = sorted ( x1 )
         
         fig1 = plt.figure()
+        
+        '''
         ax1 = fig1.add_subplot(111)
         ax1.set_xlabel(' Cores ')
         ax1.set_ylabel(' Latency ( unit ) ')
@@ -86,11 +90,36 @@ class rssvstime:
         patch1 = mpatches.Patch( color = colRed, label='Base Pages')
         plt.legend([ patch1 ], ["Latency variation" ], loc='upper left')
         #plt.show()
-        plt.scatter( , marker='o', color='y', label='Threads')
+        '''
+        plt.xticks(list(set(x1)), fontsize=12)
+        #axes = plt.gca()
+        #plt.yticks(list(set(y1)), fontsize=12)
+        plt.ylim( [0, 1.2 * max(y1)]  )
+        #plt.axis(xl1, xl2, np.float64(0), np.float64(1.2*max(y1)))
+        plt.xlabel('No. of threads', fontsize=12)
+        plt.ylabel('Latency (cycles)', fontsize=12)
+        plt.title(atomics + 'on Shared', fontsize = 14)
+        plt.scatter( x1, y1, marker='o', color='y', label='Threads')
+        plt.show()
         plt.savefig( graphDir + atomics + '/' + placement + '/' + testNum + '_place.png')
 
 if __name__ == '__main__':
     fileName = sys.argv[1]
+    '''
+    x = []
+    for i in range(10):
+        xtmp = [i] * 2
+        x.append(xtmp)
+    y = [range(2)] * 10
+    print x
+    print y
+    fig1 = plt.figure()
+    plt.scatter( x, y , marker='o', color='y', label='Threads')
+    plt.xticks(range(11))
+    plt.show()
+    exit()
+    '''
+    
     with open(sys.argv[1], 'rb') as f1:
         data1 = f1.read()
         rssvstime( data1,fileName )
