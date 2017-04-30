@@ -34,6 +34,7 @@
 #include "string.h"
 #include "assert.h"
 
+volatile ticks** pfd_count;
 volatile ticks** pfd_turn;
 volatile ticks** pfd_store;
 volatile ticks* _pfd_s;
@@ -45,14 +46,16 @@ pfd_store_init(uint32_t num_entries)
   _pfd_s = (volatile ticks*) malloc(PFD_NUM_STORES * sizeof(ticks));
   pfd_store = (volatile ticks**) malloc(PFD_NUM_STORES * sizeof(ticks*));
   pfd_turn = (volatile ticks**) malloc(PFD_NUM_STORES * sizeof(ticks*));
-  assert(_pfd_s != NULL && pfd_store != NULL && pfd_turn != NULL);
+  pfd_count = (volatile ticks**) malloc(PFD_NUM_STORES * sizeof(ticks*));
+  assert(_pfd_s != NULL && pfd_store != NULL && pfd_turn != NULL && pfd_count != NULL);
 
   volatile uint32_t i;
   for (i = 0; i < PFD_NUM_STORES; i++)
     {
       pfd_store[i] = (ticks*) malloc(num_entries * sizeof(ticks));
       pfd_turn[i] = (ticks*) malloc(num_entries * sizeof(ticks));
-      assert(pfd_store[i] != NULL && pfd_turn[i] != NULL);
+      pfd_count[i] = (ticks*) malloc(num_entries * sizeof(ticks));
+      assert(pfd_store[i] != NULL && pfd_turn[i] != NULL && pfd_count[i] != NULL);
       PREFETCHW((void*) &pfd_store[i][0]);
     }
 

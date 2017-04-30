@@ -124,6 +124,7 @@ typedef struct abs_deviation
 #define PFD_NUM_STORES 2
 #define PFD_PRINT_MAX 200
 
+extern volatile ticks** pfd_count;
 extern volatile ticks** pfd_turn;
 extern volatile ticks** pfd_store;
 extern volatile ticks* _pfd_s;
@@ -152,6 +153,12 @@ extern volatile ticks pfd_correction;
   {                                                                     \
   asm volatile ("");							\
   pfd_turn[store][entry] =  turn;                                       \
+  }
+
+#  define PFDC(store, entry, count)				        \
+  {                                                                     \
+  asm volatile ("");							\
+  pfd_count[store][entry] =  count;                                       \
   }
 
 #  define PFDOR(store, entry, reps)					\

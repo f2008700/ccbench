@@ -33,6 +33,7 @@
 uint8_t ID;
 unsigned long* seeds;
 uint32_t pfdturn;
+uint32_t cntpfd;
 
 #if defined(__tile__)
 cpu_set_t cpus;
@@ -74,7 +75,7 @@ static uint32_t cas(volatile cache_line_t* cache_line, volatile uint64_t reps);
 static uint32_t cas_0_eventually(volatile cache_line_t* cache_line, volatile uint64_t reps);
 static uint32_t cas_no_pf(volatile cache_line_t* cache_line, volatile uint64_t reps);
 static uint32_t fai(volatile cache_line_t* cache_line, volatile uint64_t reps);
-static uint8_t tas(volatile cache_line_t* cl, volatile uint64_t reps);
+static uint32_t tas(volatile cache_line_t* cl, volatile uint64_t reps);
 static uint32_t swap(volatile cache_line_t* cl, volatile uint64_t reps);
 
 static size_t parse_size(char* optarg);
@@ -768,9 +769,10 @@ main(int argc, char **argv)
 
             *turn = 0;
             B14;
-            cas(cache_line, reps);
+            cntpfd = cas(cache_line, reps);
             FAI_U32(turn);
             PFDT(0, reps, *turn);
+            PFDC(0, reps, cntpfd);
             cas_no_pf(cache_line, reps + 1);
             B14;
 	    break;
@@ -829,10 +831,11 @@ main(int argc, char **argv)
 //	      }
               *turn = 1;
               B14;
-              sum += tas(cache_line, reps);
+              cntpfd = tas(cache_line, reps);
               pfdturn = FAI_U32(turn);
               _mm_mfence();
               PFDT(0, reps, pfdturn);
+              PFDC(0, reps, cntpfd);
               cache_line->word[0] = 0;
               B14;
               break;
@@ -895,10 +898,11 @@ main(int argc, char **argv)
 		  }
                 *turn = 0;
 		B14;
-		cas(cache_line, reps);
-                FAI_U32(turn);
-                PFDT(0, reps, *turn);
-                cas_no_pf(cache_line, reps + 1);
+        cntpfd = cas(cache_line, reps);
+        FAI_U32(turn);
+        PFDT(0, reps, *turn);
+        PFDC(0, reps, cntpfd);
+        cas_no_pf(cache_line, reps + 1);
 		B14;
 		break;
 	      default:
@@ -983,18 +987,20 @@ main(int argc, char **argv)
 		  }
                 *turn = 1;
 		B14;
-                sum += tas(cache_line, reps);
+                cntpfd = tas(cache_line, reps);
                 pfdturn = FAI_U32(turn);
                 _mm_mfence();
                 PFDT(0, reps, pfdturn);
+              PFDC(0, reps, cntpfd);
                 cache_line->word[0] = 0;
 		break;
 	      default:
 		B14;
-		sum += tas(cache_line, reps);
+		cntpfd = tas(cache_line, reps);
                 pfdturn = FAI_U32(turn);
                 _mm_mfence();
                 PFDT(0, reps, pfdturn);
+              PFDC(0, reps, cntpfd);
 		cache_line->word[0] = 0;
 		break;
 	      }
@@ -1048,9 +1054,10 @@ main(int argc, char **argv)
                   *turn = 0;
                   B14;
                   B14;
-                  cas(cache_line, reps);
+                  cntpfd = cas(cache_line, reps);
                   FAI_U32(turn);
                   PFDT(0, reps, *turn);
+                  PFDC(0, reps, cntpfd);
                   cas_no_pf(cache_line, reps + 1);
                   B14;
                   break;
@@ -1058,18 +1065,20 @@ main(int argc, char **argv)
                   B14;
                   sum += load_0_eventually(cache_line, reps);
                   B14;
-                  cas(cache_line, reps);
+                  cntpfd = cas(cache_line, reps);
                   FAI_U32(turn);
                   PFDT(0, reps, *turn);
+                  PFDC(0, reps, cntpfd);
                   cas_no_pf(cache_line, reps + 1);
                   B14;
                   break;
               default:
                   B14;
                   B14;
-                  cas(cache_line, reps);
+                  cntpfd = cas(cache_line, reps);
                   FAI_U32(turn);
                   PFDT(0, reps, *turn);
+                  PFDC(0, reps, cntpfd);
                   cas_no_pf(cache_line, reps + 1);
                   B14;
 		break;
@@ -1155,29 +1164,32 @@ main(int argc, char **argv)
                 *turn = 1;
 		B14;
 		B14;
-		sum += tas(cache_line, reps);
+		cntpfd = tas(cache_line, reps);
                 pfdturn = FAI_U32(turn);
                 _mm_mfence();
                 PFDT(0, reps, pfdturn);
+              PFDC(0, reps, cntpfd);
 		cache_line->word[0] = 0;
 		break;
 	      case 1:
 		B14;
 		sum += load_0_eventually(cache_line, reps);
 		B14;
-		sum += tas(cache_line, reps);
+		cntpfd = tas(cache_line, reps);
                 pfdturn = FAI_U32(turn);
                 _mm_mfence();
                 PFDT(0, reps, pfdturn);
+                PFDC(0, reps, cntpfd);
 		cache_line->word[0] = 0;
 		break;
 	      default:
 		B14;
 		B14;
-		sum += tas(cache_line, reps);
+		cntpfd = tas(cache_line, reps);
                 pfdturn = FAI_U32(turn);
                 _mm_mfence();
                 PFDT(0, reps, pfdturn);
+                PFDC(0, reps, cntpfd);
 		cache_line->word[0] = 0;
 		break;
 	      }
@@ -1471,9 +1483,10 @@ main(int argc, char **argv)
 		sum += load_0_eventually(cache_line, reps);
                 *turn = 0;
 		B14;
-		cas(cache_line, reps);
+		cntpfd = cas(cache_line, reps);
                 FAI_U32(turn);
                 PFDT(0, reps, *turn);
+                PFDC(0, reps, cntpfd);
                 cas_no_pf(cache_line, reps + 1);
 		B14;
 
@@ -1484,9 +1497,10 @@ main(int argc, char **argv)
 		break;
 	      default:
 		B14;
-		cas(cache_line, reps);
+		cntpfd = cas(cache_line, reps);
                 FAI_U32(turn);
                 PFDT(0, reps, *turn);
+                PFDC(0, reps, cntpfd);
                 cas_no_pf(cache_line, reps + 1);
 		B14;
 
@@ -1542,10 +1556,11 @@ main(int argc, char **argv)
 		sum += load_0_eventually(cache_line, reps);
                 *turn = 1;
 		B14;
-		sum += tas(cache_line, reps);
+		cntpfd = tas(cache_line, reps);
                 pfdturn = FAI_U32(turn);
                 _mm_mfence();
                 PFDT(0, reps, pfdturn);
+                PFDC(0, reps, cntpfd);
 		cache_line->word[0] = 0;
 
 		if (!test_flush)
@@ -1555,10 +1570,11 @@ main(int argc, char **argv)
 		break;
 	      default:
 		B14;
-		sum += tas(cache_line, reps);
+		cntpfd = tas(cache_line, reps);
                 pfdturn = FAI_U32(turn);
                 _mm_mfence();
                 PFDT(0, reps, pfdturn);
+                PFDC(0, reps, cntpfd);
 		cache_line->word[0] = 0;
 
 		if (!test_flush)
@@ -1718,7 +1734,7 @@ main(int argc, char **argv)
         if (ID == id) {
             while(*addr != id);
             for (j = 0; j < test_reps; j++) {
-                printf("[%d: %d: %ld : %ld]\n", ID, j, (long int) pfd_store[0][j], pfd_turn[0][j]);
+                printf("[%d: %d: %ld : %ld]{%ld}\n", ID, j, (long int) pfd_store[0][j], pfd_turn[0][j], pfd_count[0][j]);
             }
             fflush(stdout);
             *addr = id + 1;
@@ -2150,15 +2166,17 @@ cas(volatile cache_line_t* cl, volatile uint64_t reps)
   uint8_t o = reps & 0x1;
   uint8_t no = !o; 
   volatile uint32_t r;
+  uint32_t cnt = 0;
 
   PFDI(0);
   do {
   r = CAS_U32(cl->word, o, no);
+  cnt++;
   } while (r != o);
   //printf("%d out of CAS\n", getpid());
   PFDO(0, reps);
 
-  return (r == o);
+  return cnt;
 }
 
 uint32_t
@@ -2215,11 +2233,12 @@ fai(volatile cache_line_t* cl, volatile uint64_t reps)
   return t;
 }
 
-uint8_t
+uint32_t
 tas(volatile cache_line_t* cl, volatile uint64_t reps)
 {
   volatile uint8_t r;
 
+  uint32_t cnt = 0;
   uint32_t cln = 0;
   do
     {
@@ -2234,12 +2253,13 @@ tas(volatile cache_line_t* cl, volatile uint64_t reps)
       PFDI(0);
       do {
       r = TAS_U8(b);
+      cnt++;
       } while (r != 255);
       PFDO(0, reps);
     }
   while (cln > 0);
 
-  return (r != 255);
+  return cnt;
 }
 
 uint32_t
