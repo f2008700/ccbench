@@ -68,8 +68,3 @@ Thread Placement: 0, 1, 14, 15, 28, 29, 42, 43
 Medians: 427 501 391 449 449 508 655 772 
 Iter Num: 79828
 
-Num Threads: 8
-Thread Placement: 0, 14, 15, 16, 28, 42, 43, 44
-Medians: 516 545 486 522 530 538 508 633 
-Iter Num: 27249
-

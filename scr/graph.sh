@@ -7,8 +7,11 @@ for atomic in "${atomics[@]}"
 do
     for config in "${configs[@]}"
     do
-        file=/home/spai2/ccbench/analysis/"$atomic"/"$config"/*.txt
-        python graph_ccbench.py $file&
-        echo $file
+        for file in `ls ../analysis/"$atomic"/"$config"/*.txt`
+        do
+            #file=../analysis/"$atomic"/"$config"/$file
+            python cluster_plot.py $file
+            echo $file
+        done
     done
 done

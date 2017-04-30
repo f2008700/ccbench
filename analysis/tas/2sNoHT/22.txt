@@ -54,22 +54,7 @@ Medians: 719 544 669 939
 Iter Num: 52939
 
 Num Threads: 8
-Thread Placement: 0, 1, 14, 15, 16, 17, 18, 19
-Medians: 655 288 574 506 704 1371 2068 4967 
-Iter Num: 76990
-
-Num Threads: 8
-Thread Placement: 0, 1, 2, 14, 15, 16, 17, 18
-Medians: 479 324 315 721 1532 1505 1826 4613 
-Iter Num: 5899
-
-Num Threads: 8
 Thread Placement: 0, 1, 2, 3, 14, 15, 16, 17
 Medians: 403 288 303 821 1078 926 1740 3388 
 Iter Num: 14460
-
-Num Threads: 8
-Thread Placement: 0, 14, 15, 16, 17, 18, 19, 20
-Medians: 543 516 477 574 601 1364 2559 4656 
-Iter Num: 8130
 

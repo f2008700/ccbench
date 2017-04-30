@@ -29,43 +29,44 @@ class rssvstime:
         #print atomics, placement,testNum
         
         y1 = []
-        y2 = []
         x1 = [] 
-        threadsLst = []
-        medianLst = []
+        state = None
         for s in data1.split('\n'):
-            if s.startswith("Num Threads: "):
-                threadsLst.append( int(s.split(' ')[2]) )
-            if s.startswith("Medians: "):
-                thread = threadsLst[ -1 ]
-                tempLst = [] 
-                tempLst.append( thread )
-                for med in s.split(' ')[1:-1]:
-                    tempLst.append ( float ( med ) )
-                medianLst.append( tempLst )
+            if s.startswith("S"):
+                if s.startswith("SM"):
+                    print 'Modified'
+                    state = 1
+                elif s.startswith("SE"):
+                    print 'Exclusive'
+                    state = 2
+                elif s.startswith("SS"):
+                    print 'Shared'
+                    state = 3
+                elif s.startswith("SI"):
+                    print 'Invalid'
+                    state = 4
+                for num in s.split(' ')[1:-1]:
+                    #y1.append(float(num)/1000.0)
+                    y1.append(float(num))
+                    x1.append(state)
+                    #tempLst.append ( float ( med ) )
+                #medianLst.append( tempLst )
 
         # Sort the list coz file doesn't have threads sorted
-        medianLst = sorted ( medianLst )        
         
-        # Y1 - min latency
-        # X1 - thread IDs 
-        for median in medianLst:
-            for elt in median[1:]:
-                y1.append(elt)
-            for cnt in range(median[0]):
-                x1.append( median[0])
-        
+        xlabels = ['Modified', 'Exclusive', 'Shared', 'Invalid']
         fig1 = plt.figure()
-        plt.xticks(list(set(x1)), fontsize=12)
-        plt.ylim( [-0.1 * max(y1), 1.1 * max(y1)]  )
-        plt.xlabel('No. of threads', fontsize=12)
-        #plt.ylabel('Latency (1E3 cycles)', fontsize=12)
+        plt.xticks(list(set(x1)), xlabels, fontsize=12)
+        #plt.ylim( [-0.1 * max(y1), 1.1 * max(y1)]  )
+        plt.ylim( [0, 1.1 * max(y1)]  )
+        plt.xlabel('Initial State of Cache Line', fontsize=12)
+        #plt.ylabel('Latency (cycles x $10^3$)', fontsize=12)
         plt.ylabel('Latency (cycles)', fontsize=12)
-        plt.title(atomics.upper() + ' on Shared - Single Socket - No HT', fontsize = 14)
+        plt.title(atomics.upper() + ' - Single Socket - No HT - 14 threads', fontsize = 14)
         plt.scatter( x1, y1, marker='x', color='b', label='Threads')
         plt.grid()
         plt.show()
-        #plt.savefig( graphDir + atomics + '/' + placement + '/' + testNum + '_threads.png')
+        plt.savefig( graphDir + atomics + '/' + placement + '/' + testNum + '_states.png')
 
 if __name__ == '__main__':
     fileName = sys.argv[1]

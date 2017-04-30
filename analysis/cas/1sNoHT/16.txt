@@ -23,28 +23,3 @@ Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7
 Medians: 51 337 4510 6395 8551 11110 9760 12085 
 Iter Num: 53581
 
-Num Threads: 1
-Thread Placement: 0
-Medians: 51 
-Iter Num: 1
-
-Num Threads: 14
-Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-Medians: 2869 398 11471 9748 12527 14265 16179 22779 30259 29174 20396 31528 27678 25317 
-Iter Num: 56354
-
-Num Threads: 2
-Thread Placement: 0, 1
-Medians: 51 537 
-Iter Num: 13
-
-Num Threads: 4
-Thread Placement: 0, 1, 2, 3
-Medians: 81 1298 2662 3703 
-Iter Num: 45930
-
-Num Threads: 8
-Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7
-Medians: 51 337 4510 6395 8551 11110 9760 12085 
-Iter Num: 53581
-
