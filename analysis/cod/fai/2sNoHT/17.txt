@@ -1,0 +1,90 @@
+Num Threads: 16
+Thread Placement: 0, 1, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
+Medians: 875 466 533 283 344 991 1084 909 1209 1139 1209 1154 1637 1740 1555 1458 
+Spin counts: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Iter Num: 40269
+
+Num Threads: 16
+Thread Placement: 0, 1, 2, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+Medians: 138 127 599 528 433 1224 646 1328 1115 1115 1900 2149 1643 1518 2031 1665 
+Spin counts: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Iter Num: 89976
+
+Num Threads: 16
+Thread Placement: 0, 1, 2, 3, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
+Medians: 1342 514 814 681 323 1121 1828 1185 2031 2001 1767 2438 2301 2387 2420 2492 
+Spin counts: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Iter Num: 89669
+
+Num Threads: 16
+Thread Placement: 0, 1, 2, 3, 4, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
+Medians: 1209 162 138 141 696 626 1228 304 1670 2068 2135 1725 1995 1864 1825 2426 
+Spin counts: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Iter Num: 95767
+
+Num Threads: 16
+Thread Placement: 0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+Medians: 159 905 308 159 171 1482 505 926 2198 2232 2092 1731 2587 2605 2229 2447 
+Spin counts: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Iter Num: 5120
+
+Num Threads: 16
+Thread Placement: 0, 1, 2, 3, 4, 5, 6, 14, 15, 16, 17, 18, 19, 20, 21, 22
+Medians: 274 111 320 135 168 183 875 1145 474 1261 1749 1239 1237 1446 1746 1455 
+Spin counts: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Iter Num: 29442
+
+Num Threads: 16
+Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7, 14, 15, 16, 17, 18, 19, 20, 21
+Medians: 435 584 196 162 384 1078 1789 605 948 584 2417 1564 2711 2471 2766 2353 
+Spin counts: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Iter Num: 41624
+
+Num Threads: 2
+Thread Placement: 0, 14
+Medians: 21 609 
+Spin counts: 0 0 
+Iter Num: 12
+
+Num Threads: 28
+Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
+Medians: 1121 653 481 165 1379 630 287 220 982 1030 293 2650 2313 3361 4153 1539 435 2092 726 3312 3139 2838 4082 3654 4128 3697 3998 4550 
+Spin counts: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Iter Num: 79964
+
+Num Threads: 4
+Thread Placement: 0, 1, 14, 15
+Medians: 266 244 272 317 
+Spin counts: 0 0 0 0 
+Iter Num: 58229
+
+Num Threads: 4
+Thread Placement: 0, 14, 15, 16
+Medians: 261 250 282 393 
+Spin counts: 0 0 0 0 
+Iter Num: 36186
+
+Num Threads: 8
+Thread Placement: 0, 1, 14, 15, 16, 17, 18, 19
+Medians: 244 244 131 250 459 538 681 748 
+Spin counts: 0 0 0 0 0 0 0 0 
+Iter Num: 85063
+
+Num Threads: 8
+Thread Placement: 0, 1, 2, 14, 15, 16, 17, 18
+Medians: 593 508 663 323 966 1206 1300 1479 
+Spin counts: 0 0 0 0 0 0 0 0 
+Iter Num: 4005
+
+Num Threads: 8
+Thread Placement: 0, 1, 2, 3, 14, 15, 16, 17
+Medians: 232 132 132 262 374 392 508 638 
+Spin counts: 0 0 0 0 0 0 0 0 
+Iter Num: 34529
+
+Num Threads: 8
+Thread Placement: 0, 14, 15, 16, 17, 18, 19, 20
+Medians: 305 314 268 381 487 620 690 711 
+Spin counts: 0 0 0 0 0 0 0 0 
+Iter Num: 7307
+

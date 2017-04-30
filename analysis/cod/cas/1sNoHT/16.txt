@@ -1,0 +1,30 @@
+Num Threads: 1
+Thread Placement: 0
+Medians: 21 
+Spin counts: 1 
+Iter Num: 0
+
+Num Threads: 14
+Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+Medians: 5309 2866 6619 180 6996 4207 8070 8902 11393 13498 15180 14315 12664 15629 
+Spin counts: 9 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Iter Num: 11523
+
+Num Threads: 2
+Thread Placement: 0, 1
+Medians: 26 156 
+Spin counts: 1 0 
+Iter Num: 24
+
+Num Threads: 4
+Thread Placement: 0, 1, 2, 3
+Medians: 47 644 1288 1770 
+Spin counts: 1 0 0 0 
+Iter Num: 73164
+
+Num Threads: 8
+Thread Placement: 0, 1, 2, 3, 4, 5, 6, 7
+Medians: 47 681 1658 2080 3400 3903 4535 5166 
+Spin counts: 1 0 0 0 0 0 0 0 
+Iter Num: 65546
+

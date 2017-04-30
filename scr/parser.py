@@ -60,17 +60,22 @@ def parse(f):
         # Hols the result Matrix
         x = [ [ None ] * threads for _ in range( iterations ) ]
         rawX = [ [ None ] * threads for _ in range( iterations ) ]
+        rawSpins = [ [ None ] * threads for _ in range( iterations ) ]
         flag = 0
         for thread in range(threads):
             for line in fil:
+                spin = None
                 stri = '[' + str(thread) + ':'
                 if line.startswith(stri):
                     latency = int(line.split(':')[2].split(']')[0])
                     row = int(line.split(':')[1].split(']')[0])
                     col = int(line.split(':')[3].split(']')[0]) - 1
+                    spin = int(line.split('{')[1].split('}')[0])
+
                     flag = 1         
                     x[row][col] = latency
                     rawX[row][thread] = latency
+                    rawSpins[row][thread] = spin
                 elif flag == 1:
                     flag = 0
                     break
@@ -115,6 +120,11 @@ def parse(f):
         repMedians = rawX[ idx ]
         #printLstStats(rawX)
         for i in repMedians:
+            outf.write(str(i) + ' ')
+        outf.write('\n' + 'Spin counts: ')
+        repSpins = rawSpins[ idx ]
+        #printLstStats(rawX)
+        for i in repSpins:
             outf.write(str(i) + ' ')
         outf.write('\n' + 'Iter Num: '+ str(idx))
 
